@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "168506232954",
+    "project_id": "ibet-a0846",
+    "storage_bucket": "ibet-a0846.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:168506232954:android:382e64a81fa9a6b717abc3",
+        "android_client_info": {
+          "package_name": "com.example.ibet"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBO6JrJ_rrxU_xkHUp7PcYOppRNbFZpKo0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,11 +1,11 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
-// import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:swapit_app/services/auth_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'local_widgets/my_button.dart';
 import 'local_widgets/my_textfield.dart';
-// import 'local_widgets/square_tile.dart';
 
-// final _firebase = FirebaseAuth.instance;
+final _firebase = FirebaseAuth.instance;
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -23,36 +23,48 @@ class _LoginScreenState extends State<LoginScreen> {
   final passwordController = TextEditingController();
 
   // sign user in method
-  // void _submit() async {
-  //   var email = emailController.text;
-  //   var password = passwordController.text;
-  //   try {
-  //     if (_isLogin) {
-  //       // ignore: unused_local_variable
-  //       final userCredentials = await _firebase.signInWithEmailAndPassword(
-  //           email: email, password: password);
-  //     } else {
-  //       // register user
-  //       // ignore: unused_local_variable
-  //       final userCredentials = await _firebase.createUserWithEmailAndPassword(
-  //           email: email, password: password);
-  //     }
-  //   } on FirebaseAuthException catch (error) {
-  //     if (error.code == 'email-already-in-use') {
-  //       // show dialog with error
-  //     }
-  //     if (error.code == 'user-not-found') {
-  //       // show dialog with error
-  //     }
-  //     ScaffoldMessenger.of(context).clearSnackBars();
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(
-  //         content: Text(error.message ?? 'An error occurred!'),
-  //         backgroundColor: Colors.red,
-  //       ),
-  //     );
-  //   }
-  // }
+  void _submit() async {
+    var email = emailController.text;
+    var password = passwordController.text;
+    try {
+      if (_isLogin) {
+        // ignore: unused_local_variable
+        final userCredentials = await _firebase.signInWithEmailAndPassword(
+            email: email, password: password);
+      } else {
+        // register user
+        // ignore: unused_local_variable
+        final userCredentials = await _firebase.createUserWithEmailAndPassword(
+            email: email, password: password);
+      }
+    } on FirebaseAuthException catch (error) {
+      if (error.code == 'email-already-in-use') {
+        // show dialog with error
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Email already in use.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+      if (error.code == 'user-not-found') {
+        // show dialog with error
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('No user found for that email.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please check your email and password.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -88,24 +100,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 hintText: 'Password',
                 obscureText: true,
               ),
-              const SizedBox(height: 10),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text(
-                      'Forgot Password?',
-                      style: TextStyle(color: Colors.grey[600]),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 25),
+              const SizedBox(height: 35),
               MyButton(
-                onTap: () {
-                  // _submit();
-                },
+                onTap: _submit,
                 text: _isLogin ? 'Login' : 'Register',
               ),
               const SizedBox(height: 50),
@@ -119,13 +116,13 @@ class _LoginScreenState extends State<LoginScreen> {
                         color: Colors.grey[400],
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                      child: Text(
-                        'Or continue with',
-                        style: TextStyle(color: Colors.grey[700]),
-                      ),
-                    ),
+                    // Padding(
+                    //   padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                    //   child: Text(
+                    //     'Or continue with',
+                    //     style: TextStyle(color: Colors.grey[700]),
+                    //   ),
+                    // ),
                     Expanded(
                       child: Divider(
                         thickness: 0.5,
@@ -135,25 +132,22 @@ class _LoginScreenState extends State<LoginScreen> {
                   ],
                 ),
               ),
-
-              const SizedBox(height: 50),
-
+              // const SizedBox(height: 50),
               // google + apple sign in buttons
-              const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                // children: [
-                //   SquareTile(
-                //     imagePath: 'assets/auth_images/google.png',
-                //     // onTap: () => AuthService().signInWithGoogle(),
-                //     onTap: () {},
-                //   ),
-                //   const SizedBox(width: 25),
-                //   SquareTile(
-                //     imagePath: 'assets/auth_images/apple.png',
-                //     onTap: () {},
-                //   ),
-                // ],
-              ),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.center,
+              //   children: [
+              //     SquareTile(
+              //       imagePath: 'assets/auth_images/google.png',
+              //       onTap: () => AuthService().signInWithGoogle(),
+              //     ),
+              //     const SizedBox(width: 25),
+              //     SquareTile(
+              //       imagePath: 'assets/auth_images/apple.png',
+              //       onTap: () {},
+              //     ),
+              //   ],
+              // ),
               const Spacer(),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
