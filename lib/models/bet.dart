@@ -1,11 +1,3 @@
-//   'betuid':  4134
-// 'betopener' : 123123
-// 'ends':  dateTime
-// 'name': billabord 100
-// 'description': taylor swift again number 1
-// 'entrypoints': 30
-// 'options': [ "asd" , "asdwwda", "ASDWss"]
-// 'users':[ 123123,12341]
 class Bet {
   final String betid;
   final String betopener;
@@ -13,8 +5,8 @@ class Bet {
   final String name;
   final String description;
   final int entrypoints;
-  final List<String> options;
-  final List<String> users;
+  final List<dynamic> options;
+  final Map<dynamic, dynamic> userpicks;
 
   Bet({
     required this.betid,
@@ -24,19 +16,19 @@ class Bet {
     required this.description,
     required this.entrypoints,
     required this.options,
-    required this.users,
+    required this.userpicks,
   });
 
-  factory Bet.fromJson(Map<String, dynamic> json) {
+  factory Bet.fromJson(Map<String, dynamic> json, String betid) {
     return Bet(
-      betid: json['betuid'],
+      betid: betid,
       betopener: json['betopener'],
       ends: json['ends'],
       name: json['name'],
       description: json['description'],
       entrypoints: json['entrypoints'],
       options: json['options'],
-      users: json['users'],
+      userpicks: json['users'] ?? {},
     );
   }
 
@@ -49,12 +41,7 @@ class Bet {
       'description': description,
       'entrypoints': entrypoints,
       'options': options,
-      'users': users,
+      'users': userpicks,
     };
-  }
-
-  @override
-  String toString() {
-    return 'Bet{betuid: $betid, betopener: $betopener, ends: $ends, name: $name, description: $description, entrypoints: $entrypoints, options: $options, users: $users}';
   }
 }

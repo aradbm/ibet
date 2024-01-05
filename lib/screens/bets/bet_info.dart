@@ -26,7 +26,7 @@ class _BetScreenState extends State<BetScreen> {
           Text(widget.bet.entrypoints.toString()),
           Text(widget.bet.ends.toString()),
           Text(widget.bet.options.toString()),
-          Text(widget.bet.users.toString()),
+          Text(widget.bet.userpicks.toString()),
         ],
       )),
     );

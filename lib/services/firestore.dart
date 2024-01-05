@@ -27,15 +27,16 @@ class FireStoreService {
     }
   }
 
+  Future updateUsername(String uid, String username) async {
+    try {
+      await _users.doc(uid).update({'username': username});
+    } catch (e) {
+      return e;
+    }
+  }
+
 // bet methods
   Future createBet(Map<String, dynamic> bet) async {
-    // try {
-    //   await _bets.doc(bet.betid).set(bet.toJson());
-    // } catch (e) {
-    //   return e;
-    // }
-
-    // get a bet and returns the betid
     try {
       var betData = await _bets.add(bet);
       return betData.id;
@@ -44,24 +45,18 @@ class FireStoreService {
     }
   }
 
-  Future getBet(String betid) async {
+  Future<Bet?> getBetByID(String betid) async {
     try {
       var betData = await _bets.doc(betid).get();
-      return Bet.fromJson(betData.data() as Map<String, dynamic>);
+      return Bet.fromJson(betData.data() as Map<String, dynamic>, betid);
     } catch (e) {
-      return e;
+      return null;
     }
   }
 
-  Future getBets() async {
-    try {
-      var betsData = await _bets.get();
-      return betsData.docs
-          .map((bet) => Bet.fromJson(bet.data() as Map<String, dynamic>))
-          .toList();
-    } catch (e) {
-      return e;
-    }
+  Stream<QuerySnapshot> getBets() {
+    final betsStream = _bets.orderBy('ends').snapshots();
+    return betsStream;
   }
 
   Future updateBet(Bet bet) async {

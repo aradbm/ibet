@@ -147,7 +147,7 @@ class _AddBetScreenState extends State<AddBetScreen> {
                     // here we need to add the bet to the database
                     // use the firestore service to add the bet
 
-                    Future docID = FireStoreService().createBet(
+                    Future docID = await FireStoreService().createBet(
                       {
                         'betopener': user!.uid,
                         'ends': DateTime.now()
@@ -162,10 +162,11 @@ class _AddBetScreenState extends State<AddBetScreen> {
                           betOption3Controller.text,
                           betOption4Controller.text,
                         ],
-                        'users': [],
+                        'userpicks': {},
                       },
                     );
-                    print(docID);
+                    // turn future into string
+                    print("the doc id is : $docID");
                     Navigator.pop(context);
                   }
                 },
