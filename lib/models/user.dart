@@ -1,22 +1,24 @@
 //userid, username, number of points
-class User {
+class AppUser {
   final String userid;
   final String username;
   final int points;
 
-  User({
+  AppUser({
     required this.userid,
     required this.username,
     required this.points,
   });
 
-  factory User.fromJson(Map<String, dynamic> json) {
-    return User(
-        userid: json['id'], username: json['username'], points: json['points']);
+  factory AppUser.fromJson(Map<String, dynamic> json) {
+    return AppUser(
+        userid: json['userid'],
+        username: json['username'],
+        points: json['points']);
   }
 
   Map<String, dynamic> toJson() {
-    return {'id': userid, 'username': username, 'points': points};
+    return {'userid': userid, 'username': username, 'points': points};
   }
 
   @override

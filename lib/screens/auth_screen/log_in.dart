@@ -2,6 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:ibet/models/user.dart';
+import 'package:ibet/services/firestore.dart';
 import 'local_widgets/my_button.dart';
 import 'local_widgets/my_textfield.dart';
 
@@ -19,8 +21,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   // text editing controllers
   final emailController = TextEditingController();
-
   final passwordController = TextEditingController();
+  final usernameController = TextEditingController();
 
   // sign user in method
   void _submit() async {
@@ -36,6 +38,15 @@ class _LoginScreenState extends State<LoginScreen> {
         // ignore: unused_local_variable
         final userCredentials = await _firebase.createUserWithEmailAndPassword(
             email: email, password: password);
+
+        AppUser user = AppUser(
+          userid: userCredentials.user!.uid,
+          username: usernameController.text,
+          points: 100,
+        );
+
+        // save user to firestore
+        await FireStoreService().createUser(user);
       }
     } on FirebaseAuthException catch (error) {
       if (error.code == 'email-already-in-use') {
@@ -91,7 +102,7 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 25),
               MyTextField(
                 controller: emailController,
-                hintText: 'email',
+                hintText: 'Email',
                 obscureText: false,
               ),
               const SizedBox(height: 10),
@@ -100,6 +111,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 hintText: 'Password',
                 obscureText: true,
               ),
+              if (!_isLogin) ...[
+                const SizedBox(height: 10),
+                MyTextField(
+                  controller: usernameController,
+                  hintText: 'Username',
+                  obscureText: false,
+                ),
+              ],
               const SizedBox(height: 35),
               MyButton(
                 onTap: _submit,

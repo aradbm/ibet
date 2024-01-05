@@ -1,4 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+// import 'package:ibet/models/bet.dart';
+import 'package:ibet/services/firestore.dart';
 
 class AddBetScreen extends StatefulWidget {
   const AddBetScreen({super.key});
@@ -10,12 +13,20 @@ class AddBetScreen extends StatefulWidget {
 class _AddBetScreenState extends State<AddBetScreen> {
   @override
   Widget build(BuildContext context) {
+    // current user
+    final user = FirebaseAuth.instance.currentUser;
+
     final formKey = GlobalKey<FormState>();
     final betNameController = TextEditingController();
     final betDescriptionController = TextEditingController();
     final betAmountController = TextEditingController();
 
-    // also need to have controller for 4 options
+    // time picker
+    //  controller for time picker
+    final timeController = TextEditingController();
+    //  time picker
+
+    //  controller for 4 options
 
     final betOption1Controller = TextEditingController();
     final betOption2Controller = TextEditingController();
@@ -118,13 +129,44 @@ class _AddBetScreenState extends State<AddBetScreen> {
                   return null;
                 },
               ),
+              TextFormField(
+                controller: timeController,
+                decoration: const InputDecoration(
+                  hintText: 'Bet End Time',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a bet end time';
+                  }
+                  return null;
+                },
+              ),
               ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   if (formKey.currentState!.validate()) {
                     // here we need to add the bet to the database
+                    // use the firestore service to add the bet
 
-                    ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Processing Data')));
+                    Future docID = FireStoreService().createBet(
+                      {
+                        'betopener': user!.uid,
+                        'ends': DateTime.now()
+                            .add(const Duration(days: 1))
+                            .millisecondsSinceEpoch,
+                        'name': betNameController.text,
+                        'description': betDescriptionController.text,
+                        'entrypoints': int.parse(betAmountController.text),
+                        'options': [
+                          betOption1Controller.text,
+                          betOption2Controller.text,
+                          betOption3Controller.text,
+                          betOption4Controller.text,
+                        ],
+                        'users': [],
+                      },
+                    );
+                    print(docID);
+                    Navigator.pop(context);
                   }
                 },
                 child: const Text('Submit'),

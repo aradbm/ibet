@@ -15,9 +15,9 @@ class BetsScreen extends StatefulWidget {
 final List<Bet> _bets = [
   // create fake data
   Bet(
-    betuid: '123123',
+    betid: '123123',
     betopener: '123123',
-    ends: DateTime.now(),
+    ends: DateTime.now().microsecond,
     name: 'billabord 100',
     description: 'taylor swift again number 1',
     entrypoints: 30,
@@ -25,9 +25,9 @@ final List<Bet> _bets = [
     users: ['123123', '12341'],
   ),
   Bet(
-    betuid: '123123',
+    betid: '123123',
     betopener: '123123',
-    ends: DateTime.now(),
+    ends: DateTime.now().microsecond,
     name: 'billabord 100',
     description: 'taylor swift again number 1',
     entrypoints: 30,
