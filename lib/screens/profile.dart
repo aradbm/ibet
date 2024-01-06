@@ -90,50 +90,53 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ],
       ),
-      body: Center(
-        child: FutureBuilder(
-          future: fireuser,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return Column(
-                children: [
-                  const CircleAvatar(
-                    radius: 50,
-                    backgroundImage: NetworkImage(
-                      'https://picsum.photos/200',
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Center(
+          child: FutureBuilder(
+            future: fireuser,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return Column(
+                  children: [
+                    const CircleAvatar(
+                      radius: 50,
+                      backgroundImage: NetworkImage(
+                        'https://picsum.photos/200',
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 20),
-                  Row(
-                    children: [
-                      Text(
-                        'Username: ${snapshot.data!.username}',
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+                    const SizedBox(height: 20),
+                    Row(
+                      children: [
+                        Text(
+                          'Username: ${snapshot.data!.username}',
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 20),
-                      IconButton(
-                        onPressed: changeUsername,
-                        icon: const Icon(Icons.edit),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  Text(
-                    'Points: ${snapshot.data!.points}',
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
+                        const SizedBox(width: 20),
+                        IconButton(
+                          onPressed: changeUsername,
+                          icon: const Icon(Icons.edit),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
-              );
-            } else {
-              return const CircularProgressIndicator();
-            }
-          },
+                    const SizedBox(height: 20),
+                    Text(
+                      'Points: ${snapshot.data!.points}',
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                );
+              } else {
+                return const CircularProgressIndicator();
+              }
+            },
+          ),
         ),
       ),
     );

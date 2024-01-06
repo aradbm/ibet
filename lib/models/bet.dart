@@ -7,6 +7,7 @@ class Bet {
   final int entrypoints;
   final List<dynamic> options;
   final Map<dynamic, dynamic> userpicks;
+  final int winningoption;
 
   Bet({
     required this.betid,
@@ -17,6 +18,7 @@ class Bet {
     required this.entrypoints,
     required this.options,
     required this.userpicks,
+    this.winningoption = -1,
   });
 
   factory Bet.fromJson(Map<String, dynamic> json, String betid) {
@@ -29,6 +31,7 @@ class Bet {
       entrypoints: json['entrypoints'],
       options: json['options'],
       userpicks: json['userpicks'] ?? {},
+      winningoption: json['winningoption'] ?? -1,
     );
   }
 
@@ -42,6 +45,7 @@ class Bet {
       'entrypoints': entrypoints,
       'options': options,
       'userpicks': userpicks.isEmpty ? {} : userpicks,
+      'winningoption': winningoption,
     };
   }
 }

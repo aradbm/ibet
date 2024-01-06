@@ -46,6 +46,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     await FireStoreService().getBetByID(betidController.text);
                 setState(() {
                   // Check if bet is null
+
                   if (bet == null) {
                     betWidget = const Text('Bet not found',
                         style: TextStyle(color: Colors.red, fontSize: 20));

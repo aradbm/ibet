@@ -9,7 +9,7 @@ class FireStoreService {
   final CollectionReference _bets =
       FirebaseFirestore.instance.collection('bets');
 
-// user methods
+// -------------------------user methods-------------------------
   Future createUser(AppUser user) async {
     try {
       await _users.doc(user.userid).set(user.toJson());
@@ -21,7 +21,6 @@ class FireStoreService {
   // update user points
   Future updateUserPoints(String uid, int points) async {
     try {
-      // always add to correct points, if needed the function will be called with a negative number
       await _users.doc(uid).update({'points': FieldValue.increment(points)});
     } catch (e) {
       return e;
@@ -45,7 +44,7 @@ class FireStoreService {
     }
   }
 
-// bet methods
+  // -------------------------bet methods-------------------------
   Future createBet(Map<String, dynamic> bet) async {
     try {
       var betData = await _bets.add(bet);
@@ -98,6 +97,13 @@ class FireStoreService {
 
   Future deleteBet(String betid) async {
     try {
+      // return points to users first
+      var bet = await getBetByID(betid);
+      bet!.userpicks.forEach((key, value) async {
+        await updateUserPoints(key, bet.entrypoints);
+      });
+
+      // delete bet
       await _bets.doc(betid).delete();
     } catch (e) {
       return e;

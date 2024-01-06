@@ -32,6 +32,64 @@ class _BetsScreenState extends State<BetsScreen> {
         appBar: AppBar(
           title: const Text('Bets'),
           backgroundColor: Colors.blue,
+          leading: IconButton(
+            icon: const Icon(Icons.info),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text('Info'),
+                    content: const Column(
+                      children: [
+                        Text(
+                          'Here you can see all the bets you created and joined. You can also create new bets here.\n',
+                        ),
+                        Text(
+                          'To create a new bet, click the + button in the bottom right corner.\n',
+                        ),
+                        Text(
+                          'To join a bet, click on the bet you want to join and click the Join button.\n',
+                        ),
+                        Text(
+                          'To see the details of a bet, click on the bet you want to see.\n',
+                        ),
+                        // here show each color and what it means
+                        SizedBox(height: 10),
+                        Text('Colors:'),
+                        Column(
+                          children: [
+                            Text('Yellow'),
+                            Text('Bet is still open and you created.'),
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            Text('Green'),
+                            Text('Bet is still open and you joined'),
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            Text('Red'),
+                            Text('Bet is over'),
+                          ],
+                        ),
+                      ],
+                    ),
+                    actions: [
+                      TextButton(
+                        child: const Text('Close'),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+          ),
           actions: [
             IconButton(
               icon: const Icon(Icons.search),
@@ -54,7 +112,8 @@ class _BetsScreenState extends State<BetsScreen> {
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   List bets = snapshot.data!.docs;
-                  return Expanded(
+                  return SizedBox(
+                    height: 240,
                     child: ListView.builder(
                       itemCount: bets.length,
                       itemBuilder: (context, index) {
@@ -62,7 +121,9 @@ class _BetsScreenState extends State<BetsScreen> {
                         Map<String, dynamic> betData =
                             bet.data() as Map<String, dynamic>;
                         return ListTile(
-                          tileColor: Colors.grey[200],
+                          tileColor: betData['ends'] > now
+                              ? const Color.fromARGB(255, 255, 228, 95)
+                              : Colors.grey[400],
                           leading: const Icon(Icons.bento_outlined),
                           title: Text(betData['name']),
                           subtitle: Text(betData['entrypoints'].toString()),
@@ -74,6 +135,10 @@ class _BetsScreenState extends State<BetsScreen> {
                             betData['ends'] > now
                                 ? '${((betData['ends'] - now) / 3600000).floor()}h ${(((betData['ends'] - now) / 60000) % 60).floor()}m'
                                 : 'Ended',
+                            style: TextStyle(
+                                color: betData['ends'] > now
+                                    ? Colors.green[800]
+                                    : Colors.redAccent),
                           ),
                           onTap: () {
                             Navigator.push(
@@ -96,7 +161,7 @@ class _BetsScreenState extends State<BetsScreen> {
               },
             ),
             const SizedBox(height: 10),
-            const Text('Bets I Joined:', style: TextStyle(fontSize: 20)),
+            const Text('Bets I Joined', style: TextStyle(fontSize: 20)),
             StreamBuilder(
               stream: FireStoreService()
                   .getJoinedBets(FirebaseAuth.instance.currentUser!.uid),
@@ -111,7 +176,9 @@ class _BetsScreenState extends State<BetsScreen> {
                         Map<String, dynamic> betData =
                             bet.data() as Map<String, dynamic>;
                         return ListTile(
-                          tileColor: Colors.grey[200],
+                          tileColor: betData['ends'] > now
+                              ? const Color.fromARGB(255, 151, 255, 162)
+                              : Colors.grey[400],
                           leading: const Icon(Icons.bento_outlined),
                           title: Text(betData['name']),
                           subtitle: Text(betData['entrypoints'].toString()),
@@ -123,7 +190,12 @@ class _BetsScreenState extends State<BetsScreen> {
                             betData['ends'] > now
                                 ? '${((betData['ends'] - now) / 3600000).floor()}h ${(((betData['ends'] - now) / 60000) % 60).floor()}m'
                                 : 'Ended',
+                            style: TextStyle(
+                                color: betData['ends'] > now
+                                    ? Colors.green[800]
+                                    : Colors.redAccent),
                           ),
+
                           onTap: () {
                             Navigator.push(
                               context,

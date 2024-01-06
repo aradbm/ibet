@@ -166,6 +166,7 @@ class _AddBetScreenState extends State<AddBetScreen> {
                           betOption4Controller.text,
                         ],
                         'userpicks': {},
+                        'winningoption': -1,
                       },
                     );
                     // ignore: use_build_context_synchronously
