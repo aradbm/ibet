@@ -19,7 +19,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     var fireuser = FireStoreService().getUser(user!.uid);
 
     // function to change username when button is pressed
-    void _changeUsername() {
+    void changeUsername() {
       // create a text controller for the text field
       final usernameController = TextEditingController();
       // create a form key
@@ -115,7 +115,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       const SizedBox(width: 20),
                       IconButton(
-                        onPressed: _changeUsername,
+                        onPressed: changeUsername,
                         icon: const Icon(Icons.edit),
                       ),
                     ],

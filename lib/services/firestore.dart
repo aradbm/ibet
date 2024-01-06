@@ -18,6 +18,16 @@ class FireStoreService {
     }
   }
 
+  // update user points
+  Future updateUserPoints(String uid, int points) async {
+    try {
+      // always add to correct points, if needed the function will be called with a negative number
+      await _users.doc(uid).update({'points': FieldValue.increment(points)});
+    } catch (e) {
+      return e;
+    }
+  }
+
   Future getUser(String uid) async {
     try {
       var userData = await _users.doc(uid).get();
@@ -54,9 +64,28 @@ class FireStoreService {
     }
   }
 
-  Stream<QuerySnapshot> getBets() {
-    final betsStream = _bets.orderBy('ends').snapshots();
-    return betsStream;
+  // remove user from bet
+  Future removeUserFromBet(String betid, String uid, int entrypoint) async {
+    try {
+      await _bets.doc(betid).update({
+        'userpicks': FieldValue.arrayRemove([uid])
+      });
+      // return points to user
+      await updateUserPoints(uid, entrypoint);
+    } catch (e) {
+      return e;
+    }
+  }
+
+  Stream<QuerySnapshot> getCreatedBets(String uid) {
+    final betsStream1 = _bets.where('betopener', isEqualTo: uid).snapshots();
+    return betsStream1;
+  }
+
+  Stream<QuerySnapshot> getJoinedBets(String uid) {
+    final betsStream2 =
+        _bets.where('userpicks.$uid', isGreaterThan: '').snapshots();
+    return betsStream2;
   }
 
   Future updateBet(Bet bet) async {

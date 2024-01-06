@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart';
 // import 'package:ibet/models/bet.dart';
 import 'package:ibet/services/firestore.dart';
 
@@ -40,7 +41,7 @@ class _AddBetScreenState extends State<AddBetScreen> {
           child: Form(
         key: formKey,
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(15.0),
           child: Column(
             children: [
               TextFormField(
@@ -129,30 +130,32 @@ class _AddBetScreenState extends State<AddBetScreen> {
                   return null;
                 },
               ),
-              TextFormField(
-                controller: timeController,
-                decoration: const InputDecoration(
-                  hintText: 'Bet End Time',
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a bet end time';
-                  }
-                  return null;
-                },
-              ),
+              // here we add the time picker
+              TextButton(
+                  style: TextButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(255, 192, 234, 255),
+                  ),
+                  onPressed: () {
+                    DatePicker.showDateTimePicker(context,
+                        showTitleActions: true,
+                        minTime: DateTime.now(),
+                        maxTime: DateTime.now().add(const Duration(days: 30)),
+                        onChanged: (date) {}, onConfirm: (date) {
+                      timeController.text =
+                          date.millisecondsSinceEpoch.toString();
+                    }, currentTime: DateTime.now(), locale: LocaleType.he);
+                  },
+                  child: const Text(
+                    'Pick a time 🕒',
+                    style: TextStyle(color: Colors.blue),
+                  )),
               ElevatedButton(
                 onPressed: () async {
                   if (formKey.currentState!.validate()) {
-                    // here we need to add the bet to the database
-                    // use the firestore service to add the bet
-
-                    Future docID = await FireStoreService().createBet(
+                    await FireStoreService().createBet(
                       {
                         'betopener': user!.uid,
-                        'ends': DateTime.now()
-                            .add(const Duration(days: 1))
-                            .millisecondsSinceEpoch,
+                        'ends': int.parse(timeController.text),
                         'name': betNameController.text,
                         'description': betDescriptionController.text,
                         'entrypoints': int.parse(betAmountController.text),
@@ -165,8 +168,7 @@ class _AddBetScreenState extends State<AddBetScreen> {
                         'userpicks': {},
                       },
                     );
-                    // turn future into string
-                    print("the doc id is : $docID");
+                    // ignore: use_build_context_synchronously
                     Navigator.pop(context);
                   }
                 },

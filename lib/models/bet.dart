@@ -28,7 +28,7 @@ class Bet {
       description: json['description'],
       entrypoints: json['entrypoints'],
       options: json['options'],
-      userpicks: json['users'] ?? {},
+      userpicks: json['userpicks'] ?? {},
     );
   }
 
@@ -41,7 +41,7 @@ class Bet {
       'description': description,
       'entrypoints': entrypoints,
       'options': options,
-      'users': userpicks,
+      'userpicks': userpicks.isEmpty ? {} : userpicks,
     };
   }
 }
