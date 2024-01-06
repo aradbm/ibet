@@ -57,24 +57,10 @@ class _BetsScreenState extends State<BetsScreen> {
                         // here show each color and what it means
                         SizedBox(height: 10),
                         Text('Colors:'),
-                        Column(
-                          children: [
-                            Text('Yellow'),
-                            Text('Bet is still open and you created.'),
-                          ],
-                        ),
-                        Column(
-                          children: [
-                            Text('Green'),
-                            Text('Bet is still open and you joined'),
-                          ],
-                        ),
-                        Column(
-                          children: [
-                            Text('Red'),
-                            Text('Bet is over'),
-                          ],
-                        ),
+                        Text('Yellow: Bet is still open and you created.'),
+                        Text('Grey: Bet is still open and you joined.'),
+                        Text('Green: Bet is over and you won.'),
+                        Text('Red: Bet is over and you lost.'),
                       ],
                     ),
                     actions: [
@@ -121,9 +107,15 @@ class _BetsScreenState extends State<BetsScreen> {
                         Map<String, dynamic> betData =
                             bet.data() as Map<String, dynamic>;
                         return ListTile(
-                          tileColor: betData['ends'] > now
-                              ? const Color.fromARGB(255, 255, 228, 95)
-                              : Colors.grey[400],
+                          tileColor: betData['winningoption'] == -1 &&
+                                  betData['ends'] > now
+                              ? const Color.fromARGB(255, 255, 255, 151)
+                              : betData['winningoption'] == -1 &&
+                                      betData['ends'] < now
+                                  ? Colors.red[200]
+                                  : betData['winningoption'] == 0
+                                      ? Colors.green[200]
+                                      : Colors.grey[400],
                           leading: const Icon(Icons.bento_outlined),
                           title: Text(betData['name']),
                           subtitle: Text(betData['entrypoints'].toString()),
@@ -176,9 +168,15 @@ class _BetsScreenState extends State<BetsScreen> {
                         Map<String, dynamic> betData =
                             bet.data() as Map<String, dynamic>;
                         return ListTile(
-                          tileColor: betData['ends'] > now
-                              ? const Color.fromARGB(255, 151, 255, 162)
-                              : Colors.grey[400],
+                          tileColor: betData['winningoption'] == -1 &&
+                                  betData['ends'] > now
+                              ? const Color.fromARGB(255, 255, 255, 151)
+                              : betData['winningoption'] == -1 &&
+                                      betData['ends'] < now
+                                  ? Colors.red[200]
+                                  : betData['winningoption'] == 0
+                                      ? Colors.green[200]
+                                      : Colors.grey[400],
                           leading: const Icon(Icons.bento_outlined),
                           title: Text(betData['name']),
                           subtitle: Text(betData['entrypoints'].toString()),

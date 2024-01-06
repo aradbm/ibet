@@ -149,6 +149,10 @@ class _BetScreenState extends State<BetScreen> {
                             bet = updatedBet;
                           });
 
+                          // update the points
+                          FireStoreService()
+                              .betDone(bet.betid, bet.winningoption);
+
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                               content: Text("Winner Chosen!"),
