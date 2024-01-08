@@ -60,10 +60,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       user.uid,
                       usernameController.text,
                     );
-                    setState(() {
-                      fireuser = FireStoreService()
-                          .getUser(FirebaseAuth.instance.currentUser!.uid);
-                    });
+                    setState(() {});
 
                     Navigator.pop(context);
                   }

@@ -122,11 +122,13 @@ class FireStoreService {
               .where((element) => element == winningoption)
               .length;
       // update points for winners
-      bet.userpicks.forEach((key, value) async {
-        if (value == winningoption) {
-          await updateUserPoints(key, winningpoints);
-        }
-      });
+      bet.userpicks.forEach(
+        (key, value) async {
+          if (value == winningoption) {
+            await updateUserPoints(key, winningpoints);
+          }
+        },
+      );
     } catch (e) {
       return e;
     }
