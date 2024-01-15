@@ -8,8 +8,6 @@ class TabsNav extends StatefulWidget {
   State<TabsNav> createState() => _TabsNavState();
 }
 
-// 2 tabs
-
 class _TabsNavState extends State<TabsNav> {
   int _selectedPageIndex = 0;
   void _selectPage(int index) {
