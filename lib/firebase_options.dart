@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -28,10 +25,7 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for windows - '
@@ -49,6 +43,15 @@ class DefaultFirebaseOptions {
     }
   }
 
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyBPdw61Q8QVcr9qSv_misrr1Oeqf-YoOlo',
+    appId: '1:168506232954:web:52a6753ce238452f17abc3',
+    messagingSenderId: '168506232954',
+    projectId: 'ibet-a0846',
+    authDomain: 'ibet-a0846.firebaseapp.com',
+    storageBucket: 'ibet-a0846.appspot.com',
+  );
+
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyBO6JrJ_rrxU_xkHUp7PcYOppRNbFZpKo0',
     appId: '1:168506232954:android:382e64a81fa9a6b717abc3',
@@ -64,5 +67,14 @@ class DefaultFirebaseOptions {
     projectId: 'ibet-a0846',
     storageBucket: 'ibet-a0846.appspot.com',
     iosBundleId: 'com.example.ibet',
+  );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyABtxKNakwOyE4trR7AVhy7CmlXGaCApqI',
+    appId: '1:168506232954:ios:14b8845c8f49992717abc3',
+    messagingSenderId: '168506232954',
+    projectId: 'ibet-a0846',
+    storageBucket: 'ibet-a0846.appspot.com',
+    iosBundleId: 'com.example.ibet.RunnerTests',
   );
 }
