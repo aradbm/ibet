@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart';
-// import 'package:ibet/models/bet.dart';
+import 'package:ibet/screens/components/text_controller.dart';
 import 'package:ibet/services/firestore.dart';
 
 class AddBetScreen extends StatefulWidget {
@@ -16,19 +16,12 @@ class _AddBetScreenState extends State<AddBetScreen> {
   Widget build(BuildContext context) {
     // current user
     final user = FirebaseAuth.instance.currentUser;
-
     final formKey = GlobalKey<FormState>();
+
     final betNameController = TextEditingController();
     final betDescriptionController = TextEditingController();
     final betAmountController = TextEditingController();
-
-    // time picker
-    //  controller for time picker
     final timeController = TextEditingController();
-    //  time picker
-
-    //  controller for 4 options
-
     final betOption1Controller = TextEditingController();
     final betOption2Controller = TextEditingController();
     final betOption3Controller = TextEditingController();
@@ -44,31 +37,14 @@ class _AddBetScreenState extends State<AddBetScreen> {
           padding: const EdgeInsets.all(15.0),
           child: Column(
             children: [
-              TextFormField(
-                controller: betNameController,
-                decoration: const InputDecoration(
+              TextController(
+                  betNameController: betNameController,
                   hintText: 'Bet Name',
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a bet name';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: betDescriptionController,
-                decoration: const InputDecoration(
+                  validatorText: 'Please enter a bet name'),
+              TextController(
+                  betNameController: betDescriptionController,
                   hintText: 'Bet Description',
-                ),
-                maxLines: 3,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a bet description';
-                  }
-                  return null;
-                },
-              ),
+                  validatorText: 'Please enter a bet description'),
               TextFormField(
                 controller: betAmountController,
                 decoration: const InputDecoration(
@@ -76,7 +52,7 @@ class _AddBetScreenState extends State<AddBetScreen> {
                   icon: Icon(Icons.money),
                 ),
                 validator: (value) {
-                  if (value == null || value.isEmpty) {
+                  if (value == null || value.isEmpty || int.parse(value) >= 0) {
                     return 'Please enter a bet amount';
                   }
                   return null;
@@ -143,7 +119,7 @@ class _AddBetScreenState extends State<AddBetScreen> {
                         onChanged: (date) {}, onConfirm: (date) {
                       timeController.text =
                           date.millisecondsSinceEpoch.toString();
-                    }, currentTime: DateTime.now(), locale: LocaleType.he);
+                    }, currentTime: DateTime.now(), locale: LocaleType.en);
                   },
                   child: const Text(
                     'Pick a time 🕒',

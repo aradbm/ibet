@@ -18,7 +18,7 @@ class App extends StatelessWidget {
     return MaterialApp(
       title: 'iBet',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
       ),
       home: StreamBuilder(

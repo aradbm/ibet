@@ -13,8 +13,8 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
-    // get current user instance from firebase
     final user = FirebaseAuth.instance.currentUser;
+    // get current user instance from firebase
     // get user data from firestore
     var fireuser = FireStoreService().getUser(user!.uid);
 
@@ -75,20 +75,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Profile'),
-        backgroundColor: Colors.blue,
+        title: Text(
+          'Profile',
+          style: TextStyle(color: Theme.of(context).colorScheme.onSecondary),
+        ),
+        backgroundColor: Theme.of(context).colorScheme.primary,
         actions: [
           IconButton(
             onPressed: () {
               final auth = AuthService();
               auth.signOut();
             },
-            icon: const Icon(Icons.logout),
+            icon: Icon(Icons.logout,
+                color: Theme.of(context).colorScheme.onPrimary),
           ),
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(4.0),
         child: Center(
           child: FutureBuilder(
             future: fireuser,
@@ -106,7 +110,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Row(
                       children: [
                         Text(
-                          'Username: ${snapshot.data!.username}',
+                          'Username: ${snapshot.data.username}',
                           style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
@@ -121,7 +125,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     const SizedBox(height: 20),
                     Text(
-                      'Points: ${snapshot.data!.points}',
+                      'Points: ${snapshot.data.points}',
                       style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,

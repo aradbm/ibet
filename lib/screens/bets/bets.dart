@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ibet/models/bet.dart';
 import 'package:ibet/screens/bets/add_bet.dart';
-import 'package:ibet/screens/bets/bet_info.dart';
+import 'package:ibet/screens/bets/bet_screen.dart';
 import 'package:ibet/screens/bets/search_bet.dart';
 import 'package:ibet/screens/components/info_dialog.dart';
 import 'package:ibet/services/firestore.dart';
@@ -77,17 +77,13 @@ class _BetsScreenState extends State<BetsScreen> {
                           Map<String, dynamic> betData =
                               bet.data() as Map<String, dynamic>;
                           return ListTile(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-
                             tileColor: betData['winningoption'] == -1 &&
                                     betData['ends'] > now
                                 ? const Color.fromARGB(255, 255, 255, 151)
                                 : betData['winningoption'] == -1 &&
                                         betData['ends'] < now
                                     ? Colors.red[200]
-                                    : betData['winningoption'] == 0
+                                    : betData['winningoption'] != -1
                                         ? Colors.green[200]
                                         : Colors.grey[400],
                             leading: const Icon(Icons.bento_outlined),

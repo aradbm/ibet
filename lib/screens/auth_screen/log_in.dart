@@ -39,14 +39,12 @@ class _LoginScreenState extends State<LoginScreen> {
         final userCredentials = await _firebase.createUserWithEmailAndPassword(
             email: email, password: password);
 
-        AppUser user = AppUser(
+        // save user to firestore
+        await FireStoreService().createUser(AppUser(
           userid: userCredentials.user!.uid,
           username: usernameController.text,
           points: 100,
-        );
-
-        // save user to firestore
-        await FireStoreService().createUser(user);
+        ));
       }
     } on FirebaseAuthException catch (error) {
       if (error.code == 'email-already-in-use') {
