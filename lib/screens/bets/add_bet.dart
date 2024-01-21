@@ -52,8 +52,16 @@ class _AddBetScreenState extends State<AddBetScreen> {
                   icon: Icon(Icons.money),
                 ),
                 validator: (value) {
-                  if (value == null || value.isEmpty || int.parse(value) >= 0) {
-                    return 'Please enter a bet amount';
+                  // here we check if :
+                  // 1. the value is not null
+                  // 2. the value is not empty
+                  // 3. the value is a number
+                  // 4. the value is greater than 0
+                  if (value == null ||
+                      value.isEmpty ||
+                      !int.tryParse(value)!.isFinite ||
+                      int.parse(value) <= 0) {
+                    return 'Please enter a valid bet amount';
                   }
                   return null;
                 },
