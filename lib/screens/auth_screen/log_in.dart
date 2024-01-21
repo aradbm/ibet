@@ -81,117 +81,122 @@ class _LoginScreenState extends State<LoginScreen> {
       backgroundColor: Colors.grey[300],
       body: SafeArea(
         child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const SizedBox(height: 50),
-              const Icon(
-                Icons.lock,
-                size: 100,
-              ),
-              const SizedBox(height: 50),
-              Text(
-                'Welcome back you\'ve been missed!',
-                style: TextStyle(
-                  color: Colors.grey[700],
-                  fontSize: 16,
-                ),
-              ),
-              const SizedBox(height: 25),
-              MyTextField(
-                controller: emailController,
-                hintText: 'Email',
-                obscureText: false,
-              ),
-              const SizedBox(height: 10),
-              MyTextField(
-                controller: passwordController,
-                hintText: 'Password',
-                obscureText: true,
-              ),
-              if (!_isLogin) ...[
-                const SizedBox(height: 10),
-                MyTextField(
-                  controller: usernameController,
-                  hintText: 'Username',
-                  obscureText: false,
-                ),
-              ],
-              const SizedBox(height: 35),
-              MyButton(
-                onTap: _submit,
-                text: _isLogin ? 'Login' : 'Register',
-              ),
-              const SizedBox(height: 50),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Divider(
-                        thickness: 0.5,
-                        color: Colors.grey[400],
-                      ),
-                    ),
-                    // Padding(
-                    //   padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                    //   child: Text(
-                    //     'Or continue with',
-                    //     style: TextStyle(color: Colors.grey[700]),
-                    //   ),
-                    // ),
-                    Expanded(
-                      child: Divider(
-                        thickness: 0.5,
-                        color: Colors.grey[400],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              // const SizedBox(height: 50),
-              // google + apple sign in buttons
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.center,
-              //   children: [
-              //     SquareTile(
-              //       imagePath: 'assets/auth_images/google.png',
-              //       onTap: () => AuthService().signInWithGoogle(),
-              //     ),
-              //     const SizedBox(width: 25),
-              //     SquareTile(
-              //       imagePath: 'assets/auth_images/apple.png',
-              //       onTap: () {},
-              //     ),
-              //   ],
-              // ),
-              const Spacer(),
-              Row(
+          child: SingleChildScrollView(
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height * 0.8,
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    'Not a member?',
-                    style: TextStyle(color: Colors.grey[700]),
+                  const SizedBox(height: 50),
+                  const Icon(
+                    Icons.lock,
+                    size: 100,
                   ),
-                  const SizedBox(width: 4),
-                  TextButton(
-                    onPressed: () {
-                      setState(() {
-                        _isLogin = !_isLogin;
-                      });
-                    },
-                    child: Text(
-                      _isLogin ? 'Register now' : 'Login now',
-                      style: const TextStyle(
-                        color: Colors.blue,
-                        fontWeight: FontWeight.bold,
-                      ),
+                  const SizedBox(height: 50),
+                  Text(
+                    'Welcome back you\'ve been missed!',
+                    style: TextStyle(
+                      color: Colors.grey[700],
+                      fontSize: 16,
                     ),
                   ),
+                  const SizedBox(height: 25),
+                  MyTextField(
+                    controller: emailController,
+                    hintText: 'Email',
+                    obscureText: false,
+                  ),
+                  const SizedBox(height: 10),
+                  MyTextField(
+                    controller: passwordController,
+                    hintText: 'Password',
+                    obscureText: true,
+                  ),
+                  if (!_isLogin) ...[
+                    const SizedBox(height: 10),
+                    MyTextField(
+                      controller: usernameController,
+                      hintText: 'Username',
+                      obscureText: false,
+                    ),
+                  ],
+                  const SizedBox(height: 35),
+                  MyButton(
+                    onTap: _submit,
+                    text: _isLogin ? 'Login' : 'Register',
+                  ),
+                  const SizedBox(height: 50),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Divider(
+                            thickness: 0.5,
+                            color: Colors.grey[400],
+                          ),
+                        ),
+                        // Padding(
+                        //   padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                        //   child: Text(
+                        //     'Or continue with',
+                        //     style: TextStyle(color: Colors.grey[700]),
+                        //   ),
+                        // ),
+                        Expanded(
+                          child: Divider(
+                            thickness: 0.5,
+                            color: Colors.grey[400],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // const SizedBox(height: 50),
+                  // google + apple sign in buttons
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.center,
+                  //   children: [
+                  //     SquareTile(
+                  //       imagePath: 'assets/auth_images/google.png',
+                  //       onTap: () => AuthService().signInWithGoogle(),
+                  //     ),
+                  //     const SizedBox(width: 25),
+                  //     SquareTile(
+                  //       imagePath: 'assets/auth_images/apple.png',
+                  //       onTap: () {},
+                  //     ),
+                  //   ],
+                  // ),
+                  const Spacer(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Not a member?',
+                        style: TextStyle(color: Colors.grey[700]),
+                      ),
+                      const SizedBox(width: 4),
+                      TextButton(
+                        onPressed: () {
+                          setState(() {
+                            _isLogin = !_isLogin;
+                          });
+                        },
+                        child: Text(
+                          _isLogin ? 'Register now' : 'Login now',
+                          style: const TextStyle(
+                            color: Colors.blue,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
                 ],
               ),
-              const SizedBox(height: 10),
-            ],
+            ),
           ),
         ),
       ),

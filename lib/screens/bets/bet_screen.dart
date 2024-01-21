@@ -20,16 +20,17 @@ class _BetScreenState extends State<BetScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Bet bet = widget.bet;
     final user = FirebaseAuth.instance.currentUser;
+    Bet bet = widget.bet;
     bool isCreator = bet.betopener == user!.uid;
-
+    bool isDone = bet.winningoption != -1;
+    bool isParticipant = bet.userpicks.containsKey(user.uid);
+    bool isTimeUp = bet.ends < DateTime.now().millisecondsSinceEpoch;
     if (bet.userpicks.containsKey(user.uid) && b1) {
       selectedOption = int.parse(bet.userpicks[user.uid]);
       b1 = false;
     }
-
-    // to be chosen as the winner for the creator
+    
     return Scaffold(
       appBar: AppBar(
         title: isCreator
@@ -37,7 +38,7 @@ class _BetScreenState extends State<BetScreen> {
             : const Text('Bet Info'),
         backgroundColor: Colors.blue,
         actions: [
-          if (isCreator && bet.winningoption == -1)
+          if (isCreator && !isDone)
             IconButton(
               onPressed: () {
                 // delete the bet
@@ -79,15 +80,32 @@ class _BetScreenState extends State<BetScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // if bet is done write in big
+            Center(
+              // if the time is up but the winner is not chosen yet, show the following
+              // bet time is done, but winner is not chosen yet
+              // if the time is up and the winner is chosen, show the following
+              // bet time is done and winner is chosen
+              child: Text(
+                isTimeUp
+                    ? isDone
+                        ? "Bet is done!"
+                        : "Time is up!"
+                    : "Time left: ${((bet.ends - DateTime.now().millisecondsSinceEpoch) / 1000 / 60).toStringAsFixed(2)} minutes",
+                style: const TextStyle(fontSize: 20),
+              ),
+            ),
             Text("Bet Name: ${bet.name}", style: const TextStyle(fontSize: 20)),
             Text("Bet Description: ${bet.description}"),
             Text("Bet entry point: ${bet.entrypoints}"),
+            Text(
+                "Total Points in Bet: ${bet.entrypoints * bet.userpicks.length}"),
             const SizedBox(height: 20),
             Row(
               children: [
                 const Text("Bet Options:", style: TextStyle(fontSize: 20)),
-                const Spacer(),
-                if (isCreator && bet.winningoption == -1)
+                const SizedBox(width: 20),
+                if (isCreator && isDone)
                   IconButton(
                     onPressed: () {
                       // add option
@@ -128,7 +146,7 @@ class _BetScreenState extends State<BetScreen> {
                     },
                     icon: const Icon(Icons.add),
                   ),
-                if (isCreator && bet.winningoption == -1)
+                if (isCreator && isDone)
                   IconButton(
                       onPressed: () {
                         // pick the winner
@@ -184,7 +202,7 @@ class _BetScreenState extends State<BetScreen> {
                         : Colors.white,
                     title: Text(bet.options[index]),
                     // only for creator, show the radio button to choose the winner
-                    trailing: isCreator && bet.winningoption == -1
+                    trailing: isCreator && isDone
                         ? Radio<int>(
                             value: index,
                             groupValue: winningoption,
@@ -200,8 +218,9 @@ class _BetScreenState extends State<BetScreen> {
                       groupValue: selectedOption,
                       onChanged: (int? value) {
                         setState(() {
-                          if (bet.winningoption == -1) {
-                            selectedOption = value;
+                          // if the bet is done, don't allow the user to change his pick
+                          if (!isDone && !isTimeUp) {
+                            selectedOption = value!;
                           }
                         });
                       },
@@ -211,14 +230,14 @@ class _BetScreenState extends State<BetScreen> {
               ),
             ),
             // show the following row if the winner is not chosen
-            if (bet.winningoption == -1)
+            if (isDone)
               Row(
                 children: [
                   ElevatedButton(
                     onPressed: () {
                       if (selectedOption != null) {
                         setState(() {
-                          if (!bet.userpicks.containsKey(user.uid)) {
+                          if (!isParticipant) {
                             FireStoreService().updateUserPoints(
                                 user.uid, -1 * bet.entrypoints);
                           }
@@ -244,34 +263,35 @@ class _BetScreenState extends State<BetScreen> {
                     child: const Text('Place Bet'),
                   ),
                   const SizedBox(width: 20),
-                  ElevatedButton(
-                    onPressed: () async {
-                      // remove user from bet
-                      Bet updatedBet = Bet(
-                        betid: bet.betid,
-                        betopener: bet.betopener,
-                        ends: bet.ends,
-                        name: bet.name,
-                        description: bet.description,
-                        entrypoints: bet.entrypoints,
-                        options: bet.options,
-                        // update the userpicks, remove the user
-                        userpicks: bet.userpicks..remove(user.uid),
-                      );
-                      await FireStoreService().updateBet(updatedBet);
-                      // return points to user
-                      await FireStoreService()
-                          .updateUserPoints(user.uid, bet.entrypoints);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text("Bet Removed!"),
-                          backgroundColor: Colors.red,
-                        ),
-                      );
-                      Navigator.pop(context);
-                    },
-                    child: const Text('Get out of Bet'),
-                  ),
+                  if (isParticipant)
+                    ElevatedButton(
+                      onPressed: () async {
+                        // remove user from bet
+                        Bet updatedBet = Bet(
+                          betid: bet.betid,
+                          betopener: bet.betopener,
+                          ends: bet.ends,
+                          name: bet.name,
+                          description: bet.description,
+                          entrypoints: bet.entrypoints,
+                          options: bet.options,
+                          // update the userpicks, remove the user
+                          userpicks: bet.userpicks..remove(user.uid),
+                        );
+                        await FireStoreService().updateBet(updatedBet);
+                        // return points to user
+                        await FireStoreService()
+                            .updateUserPoints(user.uid, bet.entrypoints);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Bet Removed!"),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                        Navigator.pop(context);
+                      },
+                      child: const Text('Get out of Bet'),
+                    ),
                 ],
               ),
             // show all participants usernames
@@ -305,8 +325,22 @@ class _BetScreenState extends State<BetScreen> {
                           "Chose option: ${int.parse(bet.userpicks.values.elementAt(index)) + 1}"),
                     );
                   } else {
+                    // show only the username of the participant in each tile
+                    // for each tile, if it's the creator show in orange, if won show in green
                     return ListTile(
+                      tileColor: isDone
+                          ? bet.userpicks.keys.elementAt(index) == bet.betopener
+                              ? Colors.orange[100]
+                              : Colors.white
+                          : bet.winningoption ==
+                                  int.parse(
+                                      bet.userpicks.values.elementAt(index))
+                              ? Colors.green[100]
+                              : Colors.white,
                       title: Text(bet.userpicks.keys.elementAt(index)),
+                      subtitle: Text(
+                          // show the index + 1
+                          "Chose option: ${int.parse(bet.userpicks.values.elementAt(index)) + 1}"),
                     );
                   }
                 },

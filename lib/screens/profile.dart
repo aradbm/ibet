@@ -33,6 +33,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             content: Form(
               key: formKey,
               child: TextFormField(
+                maxLength: 15,
                 controller: usernameController,
                 decoration: const InputDecoration(
                   hintText: 'New Username',

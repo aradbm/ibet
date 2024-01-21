@@ -22,54 +22,64 @@ class _BetsScreenState extends State<BetsScreen> {
     final now = DateTime.now().millisecondsSinceEpoch;
 
     return Scaffold(
-        floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => const AddBetScreen()));
+        },
+        backgroundColor: Colors.blue,
+        child: const Icon(Icons.add),
+      ),
+      appBar: AppBar(
+        title: const Text('Bets'),
+        backgroundColor: Colors.blue,
+        leading: IconButton(
+          icon: const Icon(Icons.info),
           onPressed: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => const AddBetScreen()));
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return const InfoWidget();
+              },
+            );
           },
-          backgroundColor: Colors.blue,
-          child: const Icon(Icons.add),
         ),
-        appBar: AppBar(
-          title: const Text('Bets'),
-          backgroundColor: Colors.blue,
-          leading: IconButton(
-            icon: const Icon(Icons.info),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search),
             onPressed: () {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return const InfoWidget();
-                },
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SearchScreen()),
               );
             },
           ),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.search),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const SearchScreen()),
-                );
-              },
-            ),
-          ],
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              const SizedBox(height: 10),
-              const Text('My Created Bets', style: TextStyle(fontSize: 20)),
-              StreamBuilder(
+        ],
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            const SizedBox(height: 10),
+            const Text('My Created Bets', style: TextStyle(fontSize: 20)),
+            Container(
+              height: 240,
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.blue, width: 2),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: StreamBuilder(
                 stream: FireStoreService()
                     .getCreatedBets(FirebaseAuth.instance.currentUser!.uid),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     List bets = snapshot.data!.docs;
-                    return SizedBox(
-                      height: 240,
+                    if (bets.isEmpty) {
+                      return const Center(
+                        child: Text('You have not created any bets yet'),
+                      );
+                    }
+                    return Expanded(
                       child: ListView.builder(
                         itemCount: bets.length,
                         itemBuilder: (context, index) {
@@ -123,14 +133,26 @@ class _BetsScreenState extends State<BetsScreen> {
                   }
                 },
               ),
-              const SizedBox(height: 10),
-              const Text('Bets I Joined', style: TextStyle(fontSize: 20)),
-              StreamBuilder(
+            ),
+            const SizedBox(height: 10),
+            const Text('Bets I Joined', style: TextStyle(fontSize: 20)),
+            Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.blue, width: 2),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              height: 250,
+              child: StreamBuilder(
                 stream: FireStoreService()
                     .getJoinedBets(FirebaseAuth.instance.currentUser!.uid),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     List bets = snapshot.data!.docs;
+                    if (bets.isEmpty) {
+                      return const Center(
+                        child: Text('You have not joined any bets yet'),
+                      );
+                    }
                     return Expanded(
                       child: ListView.builder(
                         itemCount: bets.length,
@@ -138,6 +160,9 @@ class _BetsScreenState extends State<BetsScreen> {
                           DocumentSnapshot bet = bets[index];
                           Map<String, dynamic> betData =
                               bet.data() as Map<String, dynamic>;
+                          // here we show each bet that the user has joined
+                          // we retrurn a container with the bet name, the entry points and the time left
+
                           return ListTile(
                             tileColor: betData['winningoption'] == -1 &&
                                     betData['ends'] > now
@@ -145,7 +170,7 @@ class _BetsScreenState extends State<BetsScreen> {
                                 : betData['winningoption'] == -1 &&
                                         betData['ends'] < now
                                     ? Colors.red[200]
-                                    : betData['winningoption'] == 0
+                                    : betData['winningoption'] != -1
                                         ? Colors.green[200]
                                         : Colors.grey[400],
                             leading: const Icon(Icons.bento_outlined),
@@ -164,14 +189,14 @@ class _BetsScreenState extends State<BetsScreen> {
                                       ? Colors.green[800]
                                       : Colors.redAccent),
                             ),
-
                             onTap: () {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => BetScreen(
-                                          bet: Bet.fromJson(betData, bet.id),
-                                        )),
+                                  builder: (context) => BetScreen(
+                                    bet: Bet.fromJson(betData, bet.id),
+                                  ),
+                                ),
                               );
                             },
                           );
@@ -185,8 +210,10 @@ class _BetsScreenState extends State<BetsScreen> {
                   }
                 },
               ),
-            ],
-          ),
-        ));
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
