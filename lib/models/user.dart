@@ -17,6 +17,15 @@ class AppUser {
         points: json['points']);
   }
 
+  // getter for user id
+  String get uid => userid;
+
+  // getter for user name
+  String get name => username;
+
+  // getter for user points
+  int get userPoints => points;
+
   Map<String, dynamic> toJson() {
     return {'userid': userid, 'username': username, 'points': points};
   }

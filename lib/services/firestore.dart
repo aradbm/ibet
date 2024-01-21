@@ -44,6 +44,16 @@ class FireStoreService {
     }
   }
 
+  // get user name s=using function getUser
+  Future<String?> getUserName(String uid) async {
+    try {
+      var user = await getUser(uid);
+      return user!.username;
+    } catch (e) {
+      return null;
+    }
+  }
+
   // -------------------------bet methods-------------------------
   Future createBet(Map<String, dynamic> bet) async {
     try {

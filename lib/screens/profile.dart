@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:ibet/screens/components/info_dialog.dart';
 import 'package:ibet/services/auth_service.dart';
 import 'package:ibet/services/firestore.dart';
 
@@ -91,6 +92,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 color: Theme.of(context).colorScheme.onPrimary),
           ),
         ],
+        leading: IconButton(
+          icon:
+              Icon(Icons.info, color: Theme.of(context).colorScheme.onPrimary),
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return const InfoWidget();
+              },
+            );
+          },
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(4.0),
