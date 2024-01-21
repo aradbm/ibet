@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:ibet/screens/bets/bets.dart';
+import 'package:ibet/screens/bets/joined_bets.dart';
+import 'package:ibet/screens/bets/my_bets.dart';
 import 'package:ibet/screens/profile.dart';
 
 class TabsNav extends StatefulWidget {
@@ -9,7 +10,7 @@ class TabsNav extends StatefulWidget {
 }
 
 class _TabsNavState extends State<TabsNav> {
-  int _selectedPageIndex = 0;
+  int _selectedPageIndex = 1;
   void _selectPage(int index) {
     setState(() => _selectedPageIndex = index);
   }
@@ -19,23 +20,29 @@ class _TabsNavState extends State<TabsNav> {
     Widget activePage;
 
     activePage = switch (_selectedPageIndex) {
-      0 => const BetsScreen(),
-      1 => const ProfileScreen(),
-      _ => const BetsScreen()
+      0 => const MyBetsScreen(),
+      1 => const JoinedBetsScreen(),
+      2 => const ProfileScreen(),
+      _ => const JoinedBetsScreen()
     };
 
     return Scaffold(
       body: activePage,
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.blue,
+        backgroundColor: Theme.of(context).primaryColor,
         onTap: _selectPage,
         currentIndex: _selectedPageIndex,
         type: BottomNavigationBarType.fixed,
-        selectedItemColor: Colors.white,
+        selectedItemColor: Theme.of(context).colorScheme.onPrimary,
+        unselectedItemColor: Theme.of(context).colorScheme.onPrimaryContainer,
         items: const [
           BottomNavigationBarItem(
+            icon: Icon(Icons.list),
+            label: 'Created Bets',
+          ),
+          BottomNavigationBarItem(
             icon: Icon(Icons.money),
-            label: 'Bets',
+            label: 'Joined Bets',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),

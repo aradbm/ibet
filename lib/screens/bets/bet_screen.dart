@@ -1,5 +1,4 @@
 // ignore_for_file: use_build_context_synchronously
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ibet/models/bet.dart';
@@ -13,24 +12,45 @@ class BetScreen extends StatefulWidget {
 }
 
 class _BetScreenState extends State<BetScreen> {
-  int? selectedOption;
-  bool b1 = true;
-  final addOptionController = TextEditingController();
+  final user = FirebaseAuth.instance.currentUser;
   int winningoption = -1;
+  int? selectedOption;
+  final addOptionController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    // checks selected option using userpicks
+    if (widget.bet.userpicks.containsKey(user!.uid)) {
+      selectedOption = int.parse(widget.bet.userpicks[user!.uid]);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser;
     Bet bet = widget.bet;
     bool isCreator = bet.betopener == user!.uid;
     bool isDone = bet.winningoption != -1;
-    bool isParticipant = bet.userpicks.containsKey(user.uid);
+    bool isParticipant = bet.userpicks.containsKey(user!.uid);
     bool isTimeUp = bet.ends < DateTime.now().millisecondsSinceEpoch;
-    if (bet.userpicks.containsKey(user.uid) && b1) {
-      selectedOption = int.parse(bet.userpicks[user.uid]);
-      b1 = false;
+
+    // return tile color function, if the bet is done, show the winning option in green
+    Color returnTileColor(int index) {
+      if (isDone) {
+        if (bet.winningoption == index) {
+          return Colors.green[100]!;
+        } else {
+          return Colors.white;
+        }
+      } else {
+        if (selectedOption == index) {
+          return Colors.green[100]!;
+        } else {
+          return Colors.white;
+        }
+      }
     }
-    
+
     return Scaffold(
       appBar: AppBar(
         title: isCreator
@@ -80,21 +100,52 @@ class _BetScreenState extends State<BetScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // if bet is done write in big
             Center(
+              // here we show the bet status
               // if the time is up but the winner is not chosen yet, show the following
               // bet time is done, but winner is not chosen yet
               // if the time is up and the winner is chosen, show the following
               // bet time is done and winner is chosen
-              child: Text(
-                isTimeUp
-                    ? isDone
-                        ? "Bet is done!"
-                        : "Time is up!"
-                    : "Time left: ${((bet.ends - DateTime.now().millisecondsSinceEpoch) / 1000 / 60).toStringAsFixed(2)} minutes",
-                style: const TextStyle(fontSize: 20),
+              child: Container(
+                padding: const EdgeInsets.all(8.0),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade100,
+                  border: Border.all(
+                    color: isTimeUp ? Colors.red : Colors.green,
+                    width: 2,
+                  ),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  isTimeUp
+                      ? isDone
+                          ? "Status: Bet is done, winning option is ${bet.winningoption + 1}"
+                          : "Status: Bet time is done, winner not chosen yet!"
+                      : "Status: Bet is ongoing! Join now!",
+                  style: const TextStyle(fontSize: 15),
+                ),
               ),
             ),
+            // if bet is done write in big
+            Row(
+              children: [
+                const Text("Bet Creator: ", style: TextStyle(fontSize: 20)),
+                FutureBuilder(
+                  future: FireStoreService().getUserName(bet.betopener),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      //check if null
+                      if (snapshot.data == null) {
+                        return const Text("Loading...");
+                      }
+                      return Text(snapshot.data.toString());
+                    }
+                    return const Text("Loading...");
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
             Text("Bet Name: ${bet.name}", style: const TextStyle(fontSize: 20)),
             Text("Bet Description: ${bet.description}"),
             Text("Bet entry point: ${bet.entrypoints}"),
@@ -229,28 +280,43 @@ class _BetScreenState extends State<BetScreen> {
                 },
               ),
             ),
-            // show the following row if the winner is not chosen
-            if (isDone)
+            // show the following row if the winner is not chosen , and the time is not up
+            if (!isDone && !isTimeUp)
               Row(
                 children: [
                   ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       if (selectedOption != null) {
-                        setState(() {
-                          if (!isParticipant) {
-                            FireStoreService().updateUserPoints(
-                                user.uid, -1 * bet.entrypoints);
-                          }
-                          bet.userpicks[user.uid] = selectedOption.toString();
-                          FireStoreService().updateBet(bet);
-                          // do the following if the user is not already in the bet
-                        });
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text("Bet Placed!"),
-                            backgroundColor: Colors.green,
-                          ),
-                        );
+                        final appUser = FireStoreService().getUser(user!.uid);
+                        int points =
+                            await appUser.then((value) => value!.points);
+                        if (points < bet.entrypoints) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text("Not enough points!"),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        } else {
+                          setState(() {
+                            if (!isParticipant) {
+                              FireStoreService().updateUserPoints(
+                                  user!.uid, -1 * bet.entrypoints);
+                              bet.userpicks[user!.uid] =
+                                  selectedOption.toString();
+                              FireStoreService().updateBet(bet);
+                              // do the following if the user is not already in the bet
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text("Bet Placed!"),
+                                  backgroundColor: Colors.green,
+                                ),
+                              );
+                              // get back
+                              Navigator.pop(context);
+                            }
+                          });
+                        }
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
@@ -276,12 +342,12 @@ class _BetScreenState extends State<BetScreen> {
                           entrypoints: bet.entrypoints,
                           options: bet.options,
                           // update the userpicks, remove the user
-                          userpicks: bet.userpicks..remove(user.uid),
+                          userpicks: bet.userpicks..remove(user!.uid),
                         );
                         await FireStoreService().updateBet(updatedBet);
                         // return points to user
                         await FireStoreService()
-                            .updateUserPoints(user.uid, bet.entrypoints);
+                            .updateUserPoints(user!.uid, bet.entrypoints);
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text("Bet Removed!"),
@@ -328,19 +394,25 @@ class _BetScreenState extends State<BetScreen> {
                     // show only the username of the participant in each tile
                     // for each tile, if it's the creator show in orange, if won show in green
                     return ListTile(
-                      tileColor: isDone
-                          ? bet.userpicks.keys.elementAt(index) == bet.betopener
-                              ? Colors.orange[100]
-                              : Colors.white
-                          : bet.winningoption ==
-                                  int.parse(
-                                      bet.userpicks.values.elementAt(index))
-                              ? Colors.green[100]
-                              : Colors.white,
-                      title: Text(bet.userpicks.keys.elementAt(index)),
-                      subtitle: Text(
-                          // show the index + 1
-                          "Chose option: ${int.parse(bet.userpicks.values.elementAt(index)) + 1}"),
+                      // use getTileColor function to return the color of the tile
+                      tileColor: returnTileColor(
+                          int.parse(bet.userpicks.values.elementAt(index))),
+                      // show the username as title, using firestoreservice to get the username
+                      // funcition looks like:   Future<String?> getUserName(String uid) async {
+                      title: FutureBuilder(
+                        future: FireStoreService()
+                            .getUserName(bet.userpicks.keys.elementAt(index)),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            //check if null
+                            if (snapshot.data == null) {
+                              return const Text("Loading...");
+                            }
+                            return Text(snapshot.data.toString());
+                          }
+                          return const Text("Loading...");
+                        },
+                      ),
                     );
                   }
                 },
