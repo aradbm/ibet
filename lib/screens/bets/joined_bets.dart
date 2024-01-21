@@ -20,13 +20,32 @@ class _JoinedBetsScreenState extends State<JoinedBetsScreen> {
     final now = DateTime.now().millisecondsSinceEpoch;
 
     // function to get tile color
-    Color getTileColor(int winningOption, int ends) {
-      if (winningOption == -1 && ends > now) {
-        return const Color.fromARGB(255, 255, 255, 151);
-      } else if (winningOption == -1 && ends < now) {
-        return Colors.red[200]!;
-      } else if (winningOption != -1) {
+    Color getTileColor(Map<String, dynamic> betData) {
+      Bet bet = Bet.fromJson(betData, betData['betuid']);
+      String myID = FirebaseAuth.instance.currentUser!.uid;
+      Map<String, int> userPicks = bet.userpicks.cast<String, int>();
+      // print(bet.userpicks);
+      // print(myID);
+
+      // find in userPicks the option that myID chose
+      int myOptionIndex = userPicks.keys.toList().indexOf(myID);
+      int winningOption = bet.winningoption;
+      bool isEnded = bet.ends < now;
+      bool isPicked = winningOption != -1;
+
+      // if bet is closed and I won - green
+      // if bet is closed and I lost - red
+      // if bet is open - yellow
+      // if bet ended but the winner is not yet decided - orange
+
+      if (isEnded && isPicked && myOptionIndex == winningOption) {
         return Colors.green[200]!;
+      } else if (isEnded && isPicked && myOptionIndex != winningOption) {
+        return Colors.red[200]!;
+      } else if (isEnded && !isPicked) {
+        return Colors.orange[200]!;
+      } else if (!isEnded) {
+        return Colors.yellow[200]!;
       } else {
         return Colors.grey[400]!;
       }
@@ -35,7 +54,7 @@ class _JoinedBetsScreenState extends State<JoinedBetsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('My Joined Bets'),
-        backgroundColor: Colors.blue,
+        backgroundColor: Theme.of(context).primaryColor,
         actions: [
           IconButton(
             icon: const Icon(Icons.search),
@@ -70,8 +89,9 @@ class _JoinedBetsScreenState extends State<JoinedBetsScreen> {
                   // we retrurn a container with the bet name, the entry points and the time left
 
                   return ListTile(
-                    tileColor:
-                        getTileColor(betData['winningoption'], betData['ends']),
+                    // i send the winnign option, the end time to the getTileColor function
+                    // and the option I chose
+                    tileColor: getTileColor(betData),
                     leading: const Icon(Icons.bento_outlined),
                     title: Text(betData['name']),
                     subtitle: Text(betData['entrypoints'].toString()),
