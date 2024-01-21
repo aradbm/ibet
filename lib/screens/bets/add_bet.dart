@@ -26,7 +26,7 @@ class _AddBetScreenState extends State<AddBetScreen> {
     final betOption2Controller = TextEditingController();
     final betOption3Controller = TextEditingController();
     final betOption4Controller = TextEditingController();
-
+    bool isTimePicked = false;
     // here we create the form for a new bet
     return Scaffold(
       appBar: AppBar(title: const Text('Add Bet')),
@@ -59,7 +59,7 @@ class _AddBetScreenState extends State<AddBetScreen> {
                   // 4. the value is greater than 0
                   if (value == null ||
                       value.isEmpty ||
-                      !int.tryParse(value)!.isFinite ||
+                      int.tryParse(value) == null ||
                       int.parse(value) <= 0) {
                     return 'Please enter a valid bet amount';
                   }
@@ -127,6 +127,7 @@ class _AddBetScreenState extends State<AddBetScreen> {
                         onChanged: (date) {}, onConfirm: (date) {
                       timeController.text =
                           date.millisecondsSinceEpoch.toString();
+                      isTimePicked = true;
                     }, currentTime: DateTime.now(), locale: LocaleType.en);
                   },
                   child: const Text(
@@ -135,7 +136,7 @@ class _AddBetScreenState extends State<AddBetScreen> {
                   )),
               ElevatedButton(
                 onPressed: () async {
-                  if (formKey.currentState!.validate()) {
+                  if (formKey.currentState!.validate() && isTimePicked) {
                     await FireStoreService().createBet(
                       {
                         'betopener': user!.uid,
@@ -155,6 +156,12 @@ class _AddBetScreenState extends State<AddBetScreen> {
                     );
                     // ignore: use_build_context_synchronously
                     Navigator.pop(context);
+                  } else if (!isTimePicked) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Please pick a time'),
+                      ),
+                    );
                   }
                 },
                 child: const Text('Submit'),

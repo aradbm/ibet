@@ -160,7 +160,7 @@ class _BetScreenState extends State<BetScreen> {
               children: [
                 const Text("Bet Options:", style: TextStyle(fontSize: 20)),
                 const SizedBox(width: 20),
-                if (isCreator && isDone)
+                if (isCreator && !isDone)
                   IconButton(
                     onPressed: () {
                       // add option
@@ -201,7 +201,7 @@ class _BetScreenState extends State<BetScreen> {
                     },
                     icon: const Icon(Icons.add),
                   ),
-                if (isCreator && isDone)
+                if (isCreator && !isDone)
                   IconButton(
                       onPressed: () {
                         // pick the winner
@@ -247,9 +247,12 @@ class _BetScreenState extends State<BetScreen> {
               ],
             ),
             // show here all the options
-            Expanded(
+            Container(
+              color: Theme.of(context).dialogBackgroundColor,
               child: ListView.builder(
                 itemCount: bet.options.length,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
                 itemBuilder: (context, index) {
                   return ListTile(
                     tileColor: bet.winningoption == index
