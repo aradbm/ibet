@@ -36,6 +36,10 @@ class _BetScreenState extends State<BetScreen> {
 
     // return tile color function, if the bet is done, show the winning option in green
     Color returnTileColor(int index) {
+      // if wiining option is -1
+      if (bet.winningoption == -1) {
+        return Colors.white;
+      }
       if (isDone) {
         if (bet.winningoption == index) {
           return Colors.green[100]!;
@@ -288,34 +292,58 @@ class _BetScreenState extends State<BetScreen> {
                     onPressed: () async {
                       if (selectedOption != null) {
                         final appUser = FireStoreService().getUser(user!.uid);
-                        int points =
-                            await appUser.then((value) => value!.points);
-                        if (points < bet.entrypoints) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text("Not enough points!"),
-                              backgroundColor: Colors.red,
-                            ),
-                          );
-                        } else {
+                        // First we check if the user is already in the bet.
+                        // Than we check if he has enough points, if he is not in the bet, we add him
+                        // and remove the points, if he is in the bet, we show a snackbar
+                        if (isParticipant) {
+                          // change the user pick, dont change his points
                           setState(() {
-                            if (!isParticipant) {
-                              FireStoreService().updateUserPoints(
-                                  user!.uid, -1 * bet.entrypoints);
-                              bet.userpicks[user!.uid] =
-                                  selectedOption.toString();
-                              FireStoreService().updateBet(bet);
-                              // do the following if the user is not already in the bet
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text("Bet Placed!"),
-                                  backgroundColor: Colors.green,
-                                ),
-                              );
-                              // get back
-                              Navigator.pop(context);
-                            }
+                            bet.userpicks[user!.uid] =
+                                selectedOption.toString();
+                            FireStoreService().updateBet(bet);
+                            // do the following if the user is not already in the bet
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("Bet Updated!"),
+                                backgroundColor: Colors.green,
+                              ),
+                            );
+                            // get back
+                            Navigator.pop(context);
                           });
+                        }
+                        // else, if the user is not in the bet, we add him and remove the points
+                        // if he is in the bet, we show a snackbar
+                        else {
+                          int points =
+                              await appUser.then((value) => value!.points);
+                          if (points <= bet.entrypoints) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("Not enough points!"),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          } else {
+                            setState(() {
+                              if (!isParticipant) {
+                                FireStoreService().updateUserPoints(
+                                    user!.uid, -1 * bet.entrypoints);
+                                bet.userpicks[user!.uid] =
+                                    selectedOption.toString();
+                                FireStoreService().updateBet(bet);
+                                // do the following if the user is not already in the bet
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text("Bet Placed!"),
+                                    backgroundColor: Colors.green,
+                                  ),
+                                );
+                                // get back
+                                Navigator.pop(context);
+                              }
+                            });
+                          }
                         }
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
