@@ -87,7 +87,6 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const SizedBox(height: 20),
                 // use assets/icon.png
                 Container(
                   decoration: BoxDecoration(
@@ -103,7 +102,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     colorBlendMode: BlendMode.color,
                   ),
                 ),
-                const SizedBox(height: 50),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
