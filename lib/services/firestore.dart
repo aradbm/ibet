@@ -73,6 +73,17 @@ class FireStoreService {
     }
   }
 
+  Future<Bet?> getBetByName(String betname) async {
+    try {
+      var betData = await _bets.where('name', isEqualTo: betname).get();
+      if (betData.docs.isEmpty) return null;
+      return Bet.fromJson(betData.docs.first.data() as Map<String, dynamic>,
+          betData.docs.first.id);
+    } catch (e) {
+      return null;
+    }
+  }
+
   // remove user from bet
   Future removeUserFromBet(String betid, String uid, int entrypoint) async {
     try {
