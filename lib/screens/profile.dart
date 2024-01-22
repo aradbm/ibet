@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ibet/screens/components/info_dialog.dart';
-import 'package:ibet/screens/components/my_coin.dart';
 import 'package:ibet/services/auth_service.dart';
 import 'package:ibet/services/firestore.dart';
 
