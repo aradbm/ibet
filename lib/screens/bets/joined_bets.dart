@@ -71,6 +71,23 @@ class _JoinedBetsScreenState extends State<JoinedBetsScreen> {
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               List bets = snapshot.data!.docs;
+              // Sort the bets by:
+              // First, if the bet has a winning option
+              // Second, by the time left
+              bets.sort((a, b) {
+                Map<String, dynamic> aData = a.data() as Map<String, dynamic>;
+                Map<String, dynamic> bData = b.data() as Map<String, dynamic>;
+                if (aData['winningoption'] != -1 &&
+                    bData['winningoption'] == -1) {
+                  return 1;
+                } else if (aData['winningoption'] == -1 &&
+                    bData['winningoption'] != -1) {
+                  return -1;
+                } else {
+                  return aData['ends'] - bData['ends'];
+                }
+              });
+
               if (bets.isEmpty) {
                 return const Center(
                   child: Text('You have not joined any bets yet'),
