@@ -12,21 +12,18 @@ class AddBetScreen extends StatefulWidget {
 }
 
 class _AddBetScreenState extends State<AddBetScreen> {
+  final betNameController = TextEditingController();
+  final betDescriptionController = TextEditingController();
+  final betAmountController = TextEditingController();
+  final timeController = TextEditingController();
+  final optionController = TextEditingController();
+  bool isTimePicked = false;
+  List<String> betOptions = [];
   @override
   Widget build(BuildContext context) {
     // current user
     final user = FirebaseAuth.instance.currentUser;
     final formKey = GlobalKey<FormState>();
-
-    final betNameController = TextEditingController();
-    final betDescriptionController = TextEditingController();
-    final betAmountController = TextEditingController();
-    final timeController = TextEditingController();
-    final betOption1Controller = TextEditingController();
-    final betOption2Controller = TextEditingController();
-    final betOption3Controller = TextEditingController();
-    final betOption4Controller = TextEditingController();
-    bool isTimePicked = false;
     // here we create the form for a new bet
     return Scaffold(
       appBar: AppBar(title: const Text('Add Bet')),
@@ -52,11 +49,6 @@ class _AddBetScreenState extends State<AddBetScreen> {
                   icon: Icon(Icons.money),
                 ),
                 validator: (value) {
-                  // here we check if :
-                  // 1. the value is not null
-                  // 2. the value is not empty
-                  // 3. the value is a number
-                  // 4. the value is greater than 0
                   if (value == null ||
                       value.isEmpty ||
                       int.tryParse(value) == null ||
@@ -66,55 +58,42 @@ class _AddBetScreenState extends State<AddBetScreen> {
                   return null;
                 },
               ),
-              TextFormField(
-                controller: betOption1Controller,
-                decoration: const InputDecoration(
-                  hintText: 'Bet Option 1',
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a bet option';
-                  }
-                  return null;
-                },
+              Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      controller: optionController,
+                      decoration: const InputDecoration(
+                        hintText: 'Add Bet Option',
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.add),
+                    onPressed: () {
+                      if (optionController.text.isNotEmpty) {
+                        setState(() {
+                          betOptions.add(optionController.text);
+                          optionController.clear();
+                        });
+                      }
+                    },
+                  ),
+                ],
               ),
-              TextFormField(
-                controller: betOption2Controller,
-                decoration: const InputDecoration(
-                  hintText: 'Bet Option 2',
+              // List of bet options
+              for (int i = 0; i < betOptions.length; i++)
+                ListTile(
+                  title: Text(betOptions[i]),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.delete),
+                    onPressed: () {
+                      setState(() {
+                        betOptions.removeAt(i);
+                      });
+                    },
+                  ),
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a bet option';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: betOption3Controller,
-                decoration: const InputDecoration(
-                  hintText: 'Bet Option 3',
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a bet option';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: betOption4Controller,
-                decoration: const InputDecoration(
-                  hintText: 'Bet Option 4',
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a bet option';
-                  }
-                  return null;
-                },
-              ),
-              // here we add the time picker
               TextButton(
                   style: TextButton.styleFrom(
                     backgroundColor: const Color.fromARGB(255, 192, 234, 255),
@@ -136,7 +115,9 @@ class _AddBetScreenState extends State<AddBetScreen> {
                   )),
               ElevatedButton(
                 onPressed: () async {
-                  if (formKey.currentState!.validate() && isTimePicked) {
+                  if (formKey.currentState!.validate() &&
+                      isTimePicked &&
+                      betOptions.length > 1) {
                     await FireStoreService().createBet(
                       {
                         'betopener': user!.uid,
@@ -144,12 +125,7 @@ class _AddBetScreenState extends State<AddBetScreen> {
                         'name': betNameController.text,
                         'description': betDescriptionController.text,
                         'entrypoints': int.parse(betAmountController.text),
-                        'options': [
-                          betOption1Controller.text,
-                          betOption2Controller.text,
-                          betOption3Controller.text,
-                          betOption4Controller.text,
-                        ],
+                        'options': betOptions,
                         'userpicks': {},
                         'winningoption': -1,
                       },
@@ -160,6 +136,12 @@ class _AddBetScreenState extends State<AddBetScreen> {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text('Please pick a time'),
+                      ),
+                    );
+                  } else if (betOptions.length <= 1) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Please add at least 2 options'),
                       ),
                     );
                   }
