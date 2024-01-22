@@ -15,9 +15,9 @@ class MyCoin extends StatelessWidget {
       clipBehavior: Clip.hardEdge,
       child: Image.asset(
         'assets/icon/icon.png',
-        height: 30,
+        height: 25,
         // make round corners
-        color: Colors.red,
+        color: Color.fromARGB(255, 53, 94, 34),
         colorBlendMode: BlendMode.color,
       ),
     );

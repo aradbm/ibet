@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:ibet/models/bet.dart';
 import 'package:ibet/screens/bets/bet_screen.dart';
 import 'package:ibet/screens/bets/search_bet.dart';
+import 'package:ibet/screens/components/my_coin.dart';
 import 'package:ibet/services/firestore.dart';
 
 class JoinedBetsScreen extends StatefulWidget {
@@ -20,7 +21,7 @@ class _JoinedBetsScreenState extends State<JoinedBetsScreen> {
     final now = DateTime.now().millisecondsSinceEpoch;
 
     // function to get tile color
-    Color getTileColor(Map<String, dynamic> betData, String betID) {
+        List<Color> getTileColor(Map<String, dynamic> betData, String betID) {
       Bet bet = Bet.fromJson(betData, betID);
       String myID = FirebaseAuth.instance.currentUser!.uid;
       Map<String, dynamic> userpicks = bet.userpicks as Map<String, dynamic>;
@@ -36,15 +37,15 @@ class _JoinedBetsScreenState extends State<JoinedBetsScreen> {
       // if bet is open - yellow
       // if bet ended but the winner is not yet decided - orange
       if (isWinnerPicked && myOption == winningOption) {
-        return Colors.green[200]!;
+        return [const Color.fromARGB(255, 237, 239, 240), Colors.green[400]!];
       } else if (isWinnerPicked && myOption != winningOption) {
-        return Colors.red[200]!;
+        return [const Color.fromARGB(255, 237, 239, 240), Colors.red[400]!];
       } else if (isTimeEnded && !isWinnerPicked) {
-        return Colors.orange[200]!;
+        return [const Color.fromARGB(255, 237, 239, 240), Colors.orange[400]!];
       } else if (!isTimeEnded) {
-        return Colors.yellow[200]!;
+        return [const Color.fromARGB(255, 237, 239, 240), Colors.yellow[400]!];
       } else {
-        return Colors.grey[400]!;
+        return [const Color.fromARGB(255, 237, 239, 240), Colors.grey[400]!];
       }
     }
 
@@ -102,37 +103,55 @@ class _JoinedBetsScreenState extends State<JoinedBetsScreen> {
                   // here we show each bet that the user has joined
                   // we retrurn a container with the bet name, the entry points and the time left
 
-                  return ListTile(
-                    // i send the winnign option, the end time to the getTileColor function
-                    // and the option I chose
-                    tileColor: getTileColor(betData, bet.id),
-                    leading: const Icon(Icons.bento_outlined),
-                    title: Text(betData['name']),
-                    subtitle: Text(betData['entrypoints'].toString()),
-                    // trailing with the time left, counting down
-                    trailing: Text(
-                      // if the bet is closed, we show 'Ended'
-
-                      betData['winningoption'] != -1
-                          ? 'Ended'
-                          : betData['ends'] > now
-                              ? '${((betData['ends'] - now) / 86400000).floor()}d ${(((betData['ends'] - now) % 86400000) / 3600000).floor()}h ${((((betData['ends'] - now) % 86400000) % 3600000) / 60000).floor()}m'
-                              : 'Ended',
-                      style: TextStyle(
-                          color: betData['ends'] > now
-                              ? Colors.green[800]
-                              : Colors.redAccent),
-                    ),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => BetScreen(
-                            bet: Bet.fromJson(betData, bet.id),
-                          ),
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: getTileColor(betData, bet.id),
                         ),
-                      );
-                    },
+                        borderRadius: BorderRadius.circular(15.0),
+                      ),
+                      child: ListTile(
+                        // i send the winnign option, the end time to the getTileColor function
+                        // and the option I chose                      
+                        leading: const Icon(Icons.bento_outlined),
+                        title: Text(betData['name']),
+                        subtitle: Row(
+                        children: [// Add some horizontal spacing
+                        Text("${betData['entrypoints']}  "), // Your text
+                        const MyCoin(), // Your icon
+                        const SizedBox(width: 8.0), 
+                       ],    
+                       ),               
+                        // trailing with the time left, counting down
+                        trailing: Text(
+                          // if the bet is closed, we show 'Ended'
+                      
+                          betData['winningoption'] != -1
+                              ? 'Ended'
+                              : betData['ends'] > now
+                                  ? '${((betData['ends'] - now) / 86400000).floor()}d ${(((betData['ends'] - now) % 86400000) / 3600000).floor()}h ${((((betData['ends'] - now) % 86400000) % 3600000) / 60000).floor()}m'
+                                  : 'Ended',
+                          style: TextStyle(
+                              color: betData['ends'] > now
+                                  ? Colors.green[800]
+                                  : Colors.redAccent),
+                        ),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => BetScreen(
+                                bet: Bet.fromJson(betData, bet.id),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
                   );
                 },
               );
