@@ -24,10 +24,10 @@ class InfoWidget extends StatelessWidget {
           // here show each color and what it means
           SizedBox(height: 10),
           Text('Colors:'),
-          Text('Yellow: Bet is still open and you created.'),
-          Text('Grey: Bet is still open and you joined.'),
-          Text('Green: Bet is over and you won.'),
-          Text('Red: Bet is over and you lost.'),
+          Text('Yellow: Bet is still open and you created.',style: TextStyle(color: Colors.yellow),          ),   
+          Text('Grey: Bet is still open and you joined.', style: TextStyle(color: Colors.grey)),
+          Text('Green: Bet is over and you won.', style: TextStyle(color: Colors.green)),
+          Text('Red: Bet is over and you lost.', style: TextStyle(color: Colors.red)),
         ],
       ),
       actions: [
