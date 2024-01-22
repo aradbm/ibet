@@ -23,28 +23,25 @@ class _MyBetsScreenState extends State<MyBetsScreen> {
     Color getTileColor(Map<String, dynamic> betData, String betID) {
       Bet bet = Bet.fromJson(betData, betID);
       String myID = FirebaseAuth.instance.currentUser!.uid;
-      Map<String, int> userPicks = bet.userpicks.cast<String, int>();
-      // print(bet.userpicks);
-      // print(myID);
-
-      // find in userPicks the option that myID chose
-      int myOptionIndex = userPicks.keys.toList().indexOf(myID);
+      Map<String, dynamic> userpicks = bet.userpicks as Map<String, dynamic>;
+      int myOption = -1;
+      if (userpicks[myID] != null) {
+        myOption = int.parse(userpicks[myID]);
+      }
       int winningOption = bet.winningoption;
-      bool isEnded = bet.ends < now;
-      bool isPicked = winningOption != -1;
-
+      bool isTimeEnded = bet.ends < now;
+      bool isWinnerPicked = winningOption != -1;
       // if bet is closed and I won - green
       // if bet is closed and I lost - red
       // if bet is open - yellow
       // if bet ended but the winner is not yet decided - orange
-
-      if (isEnded && isPicked && myOptionIndex == winningOption) {
+      if (isWinnerPicked && myOption == winningOption) {
         return Colors.green[200]!;
-      } else if (isEnded && isPicked && myOptionIndex != winningOption) {
+      } else if (isWinnerPicked && myOption != winningOption) {
         return Colors.red[200]!;
-      } else if (isEnded && !isPicked) {
+      } else if (isTimeEnded && !isWinnerPicked) {
         return Colors.orange[200]!;
-      } else if (!isEnded) {
+      } else if (!isTimeEnded) {
         return Colors.yellow[200]!;
       } else {
         return Colors.grey[400]!;
@@ -91,9 +88,9 @@ class _MyBetsScreenState extends State<MyBetsScreen> {
                   trailing: Text(
                     // here we show when from now the bet will end
                     //  if the bet is already over, we show 'Ended'
-                    //  if the bet is still open, we show the time left in hours and minutes
+                    //  if the bet is still open, we show the time left in days, hours and minutes, use  premade functions to calculate
                     betData['ends'] > now
-                        ? '${((betData['ends'] - now) / 3600000).floor()}h ${(((betData['ends'] - now) / 60000) % 60).floor()}m'
+                        ? '${((betData['ends'] - now) / 86400000).floor()}d ${(((betData['ends'] - now) % 86400000) / 3600000).floor()}h ${((((betData['ends'] - now) % 86400000) % 3600000) / 60000).floor()}m'
                         : 'Ended',
                     style: TextStyle(
                         color: betData['ends'] > now

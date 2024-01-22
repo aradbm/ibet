@@ -122,7 +122,7 @@ class _BetScreenState extends State<BetScreen> {
                         color: isTimeUp
                             ? isDone
                                 ? Colors.green
-                                : Colors.red
+                                : Colors.orangeAccent
                             : isDone
                                 ? Colors.green
                                 : Colors.orangeAccent,
@@ -263,43 +263,40 @@ class _BetScreenState extends State<BetScreen> {
                   ],
                 ),
                 // show here all the options
-                Container(
-                  color: Theme.of(context).dialogBackgroundColor,
-                  child: ListView.builder(
-                    itemCount: bet.options.length,
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        tileColor: bet.winningoption == index
-                            ? Colors.green[100]
-                            : Colors.white,
-                        title: Text(bet.options[index]),
-                        // only for creator, show the radio button to choose the winner
-                        trailing: isCreator && !isDone
-                            ? Radio<int>(
-                                value: index,
-                                groupValue: winningoption,
-                                onChanged: (int? value) {
-                                  setState(() {
-                                    winningoption = value!;
-                                  });
-                                },
-                              )
-                            : null,
-                        leading: Radio<int>(
-                          value: index,
-                          groupValue: selectedOption,
-                          onChanged: (int? value) {
-                            // if the bet is done, don't allow the user to change his pick
-                            if (!isDone && !isTimeUp) {
-                              setState(() => selectedOption = value!);
-                            }
-                          },
-                        ),
-                      );
-                    },
-                  ),
+                ListView.builder(
+                  itemCount: bet.options.length,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      tileColor: bet.winningoption == index
+                          ? Colors.green[100]
+                          : Colors.white,
+                      title: Text(bet.options[index]),
+                      // only for creator, show the radio button to choose the winner
+                      trailing: isCreator && !isDone
+                          ? Radio<int>(
+                              value: index,
+                              groupValue: winningoption,
+                              onChanged: (int? value) {
+                                setState(() {
+                                  winningoption = value!;
+                                });
+                              },
+                            )
+                          : null,
+                      leading: Radio<int>(
+                        value: index,
+                        groupValue: selectedOption,
+                        onChanged: (int? value) {
+                          // if the bet is done, don't allow the user to change his pick
+                          if (!isDone && !isTimeUp) {
+                            setState(() => selectedOption = value!);
+                          }
+                        },
+                      ),
+                    );
+                  },
                 ),
                 // show the following row if the winner is not chosen , and the time is not up
                 if (!isDone && !isTimeUp)
@@ -413,9 +410,13 @@ class _BetScreenState extends State<BetScreen> {
                 Expanded(
                   child: ListView.builder(
                     itemCount: bet.userpicks.length,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
                     itemBuilder: (context, index) {
                       if (isCreator) {
                         return ListTile(
+                          tileColor: returnTileColor(
+                              int.parse(bet.userpicks.values.elementAt(index))),
                           title: FutureBuilder(
                             future: FireStoreService().getUserName(
                                 bet.userpicks.keys.elementAt(index)),

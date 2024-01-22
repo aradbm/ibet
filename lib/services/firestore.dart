@@ -121,26 +121,27 @@ class FireStoreService {
   }
 
   // Bet done, update user points accordingly
-  Future betDone(String betid, int winningoption) async {
+  Future<Bet?> betDone(String betid, int winningoption) async {
     try {
       // calculate overall points, than spread to winners
-      var bet = await getBetByID(betid);
-      int totalpoints = bet!.entrypoints * bet.userpicks.length;
-      int winningpoints = totalpoints ~/
-          bet.userpicks.values
-              .toList()
-              .where((element) => element == winningoption)
-              .length;
+      Bet? bet = await getBetByID(betid);
+      if (bet == null) return null;
+      int totalpoints = bet.entrypoints * bet.userpicks.length;
+      Map<String, dynamic> userpicks = bet.userpicks as Map<String, dynamic>;
+      int numOfWinners = userpicks.values
+          .where((element) => int.parse(element) == winningoption)
+          .length;
+      if (numOfWinners == 0) return null;
+      int winningpoints = totalpoints ~/ numOfWinners;
       // update points for winners
-      bet.userpicks.forEach(
-        (key, value) async {
-          if (value == winningoption) {
-            await updateUserPoints(key, winningpoints);
-          }
-        },
-      );
+      userpicks.forEach((key, value) async {
+        if (int.parse(value) == winningoption) {
+          await updateUserPoints(key, winningpoints);
+        }
+      });
     } catch (e) {
-      return e;
+      return null;
     }
+    return null;
   }
 }
