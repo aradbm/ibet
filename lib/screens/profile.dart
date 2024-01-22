@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ibet/screens/components/info_dialog.dart';
+import 'package:ibet/screens/components/my_coin.dart';
 import 'package:ibet/services/auth_service.dart';
 import 'package:ibet/services/firestore.dart';
 
@@ -106,7 +107,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(4.0),
+        padding: const EdgeInsets.only(top: 30),
         child: Center(
           child: FutureBuilder(
             future: fireuser,
@@ -114,25 +115,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
               if (snapshot.hasData) {
                 return Column(
                   children: [
-                    const CircleAvatar(
-                      radius: 50,
-                      backgroundImage: NetworkImage(
-                        'https://picsum.photos/200',
-                      ),
+                    Image.asset(
+                      'assets/icon/icon.png',
+                      height: 150,
                     ),
                     const SizedBox(height: 20),
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        const SizedBox(
+                          width: 60,
+                        ),
                         Text(
                           'Username: ${snapshot.data.username}',
                           style: const TextStyle(
-                            fontSize: 20,
+                            fontSize: 22,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        const SizedBox(width: 20),
+                        const SizedBox(width: 10),
                         IconButton(
-                          onPressed: changeUsername,
+                          onPressed: () {
+                            changeUsername();
+                          },
                           icon: const Icon(Icons.edit),
                         ),
                       ],
@@ -141,7 +146,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Text(
                       'Points: ${snapshot.data.points}',
                       style: const TextStyle(
-                        fontSize: 20,
+                        fontSize: 22,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
