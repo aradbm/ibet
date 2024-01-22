@@ -94,12 +94,13 @@ class _JoinedBetsScreenState extends State<JoinedBetsScreen> {
                     subtitle: Text(betData['entrypoints'].toString()),
                     // trailing with the time left, counting down
                     trailing: Text(
-                      // here we show when from now the bet will end
-                      //  if the bet is already over, we show 'Ended'
-                      //  if the bet is still open, we show the time left in hours and minutes
-                      betData['ends'] > now
-                          ? '${((betData['ends'] - now) / 86400000).floor()}d ${(((betData['ends'] - now) % 86400000) / 3600000).floor()}h ${((((betData['ends'] - now) % 86400000) % 3600000) / 60000).floor()}m'
-                          : 'Ended',
+                      // if the bet is closed, we show 'Ended'
+
+                      betData['winningoption'] != -1
+                          ? 'Ended'
+                          : betData['ends'] > now
+                              ? '${((betData['ends'] - now) / 86400000).floor()}d ${(((betData['ends'] - now) % 86400000) / 3600000).floor()}h ${((((betData['ends'] - now) % 86400000) % 3600000) / 60000).floor()}m'
+                              : 'Ended',
                       style: TextStyle(
                           color: betData['ends'] > now
                               ? Colors.green[800]

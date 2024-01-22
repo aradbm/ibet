@@ -89,9 +89,11 @@ class _MyBetsScreenState extends State<MyBetsScreen> {
                     // here we show when from now the bet will end
                     //  if the bet is already over, we show 'Ended'
                     //  if the bet is still open, we show the time left in days, hours and minutes, use  premade functions to calculate
-                    betData['ends'] > now
-                        ? '${((betData['ends'] - now) / 86400000).floor()}d ${(((betData['ends'] - now) % 86400000) / 3600000).floor()}h ${((((betData['ends'] - now) % 86400000) % 3600000) / 60000).floor()}m'
-                        : 'Ended',
+                    betData['winningoption'] != -1
+                        ? 'Ended'
+                        : betData['ends'] > now
+                            ? '${((betData['ends'] - now) / 86400000).floor()}d ${(((betData['ends'] - now) % 86400000) / 3600000).floor()}h ${((((betData['ends'] - now) % 86400000) % 3600000) / 60000).floor()}m'
+                            : 'Ended',
                     style: TextStyle(
                         color: betData['ends'] > now
                             ? Colors.green[800]
