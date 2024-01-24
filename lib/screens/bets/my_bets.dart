@@ -62,7 +62,8 @@ class _MyBetsScreenState extends State<MyBetsScreen> {
         child: const Icon(Icons.add),
       ),
       appBar: AppBar(
-        title: const Text('My Created Bets'),
+        title: Text(('My Created Bets'),
+        style:TextStyle(color: Theme.of(context).colorScheme.onSecondary)),
         backgroundColor: Theme.of(context).primaryColor,
       ),
       body: StreamBuilder(

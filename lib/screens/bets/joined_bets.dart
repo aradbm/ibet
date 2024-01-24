@@ -51,7 +51,8 @@ class _JoinedBetsScreenState extends State<JoinedBetsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('My Joined Bets'),
+        title: Text(('My Joined Bets'),
+        style:TextStyle(color: Theme.of(context).colorScheme.onSecondary)),
         backgroundColor: Theme.of(context).primaryColor,
         actions: [
           IconButton(
