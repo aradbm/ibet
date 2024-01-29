@@ -36,34 +36,44 @@ class _MyBetsScreenState extends State<MyBetsScreen> {
       // if bet is closed and I lost - red
       // if bet is open - yellow
       // if bet ended but the winner is not yet decided - orange
+      // Define color variables
+      const Color baseColor = Color.fromARGB(255, 237, 239, 240);
+      final Color winColor = Colors.green[400]!;
+      final Color loseColor = Colors.red[400]!;
+      final Color undecidedColor = Colors.orange[400]!;
+      final Color openBetColor = Colors.yellow[400]!;
+      final Color defaultColor = Colors.grey[400]!;
+
+      // Conditional logic to determine color
       if (isWinnerPicked && myOption == winningOption) {
-        return [const Color.fromARGB(255, 237, 239, 240), Colors.green[400]!];
+        return [winColor, baseColor];
       } else if (isWinnerPicked && myOption != winningOption) {
-        return [const Color.fromARGB(255, 237, 239, 240), Colors.red[400]!];
+        return [loseColor, baseColor];
       } else if (isTimeEnded && !isWinnerPicked) {
-        return [const Color.fromARGB(255, 237, 239, 240), Colors.orange[400]!];
+        return [undecidedColor, baseColor];
       } else if (!isTimeEnded) {
-        return [const Color.fromARGB(255, 237, 239, 240), Colors.yellow[400]!];
+        return [openBetColor, baseColor];
       } else {
-        return [const Color.fromARGB(255, 237, 239, 240), Colors.grey[400]!];
+        return [defaultColor, baseColor];
       }
     }
 
     // get gradient color
-    
 
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const AddBetScreen()));
-        },
-        backgroundColor: Colors.blue,
-        child: const Icon(Icons.add),
-      ),
+          onPressed: () {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const AddBetScreen()));
+          },
+          backgroundColor: Theme.of(context).primaryColor,
+          child: Icon(
+            Icons.add,
+            color: Theme.of(context).colorScheme.onPrimary,
+          )),
       appBar: AppBar(
         title: Text(('My Created Bets'),
-        style:TextStyle(color: Theme.of(context).colorScheme.onSecondary)),
+            style: TextStyle(color: Theme.of(context).colorScheme.onSecondary)),
         backgroundColor: Theme.of(context).primaryColor,
       ),
       body: StreamBuilder(
@@ -113,14 +123,14 @@ class _MyBetsScreenState extends State<MyBetsScreen> {
                     ),
                     child: ListTile(
                       leading: const Icon(Icons.bento_outlined),
-                      title: Text(betData['name']), 
+                      title: Text(betData['name']),
                       subtitle: Row(
-                      children: [                     
-                      Text("${betData['entrypoints']}  "), // Your text
-                      const MyCoin(), // Your icon
-                      const SizedBox(width: 8.0),
-                      ],    
-                      ),               
+                        children: [
+                          Text("${betData['entrypoints']}  "), // Your text
+                          const MyCoin(), // Your icon
+                          const SizedBox(width: 8.0),
+                        ],
+                      ),
                       // trailing with the time left, counting down
                       trailing: Text(
                         // here we show when from now the bet will end

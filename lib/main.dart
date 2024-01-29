@@ -19,7 +19,8 @@ class App extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'iBet',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+        colorScheme:
+            ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 68, 149, 255)),
         useMaterial3: true,
       ),
       home: StreamBuilder(

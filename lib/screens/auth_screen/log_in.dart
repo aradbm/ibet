@@ -1,9 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
-
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:ibet/models/user.dart';
-import 'package:ibet/screens/components/my_coin.dart';
 import 'package:ibet/services/firestore.dart';
 import 'local_widgets/my_button.dart';
 import 'local_widgets/my_textfield.dart';
@@ -79,7 +77,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[300],
+      backgroundColor: Colors.grey[350],
       body: Center(
         child: SingleChildScrollView(
           child: SizedBox(
@@ -102,18 +100,13 @@ class _LoginScreenState extends State<LoginScreen> {
                     colorBlendMode: BlendMode.color,
                   ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Welcome back!    ',
-                      style: TextStyle(
-                        color: Colors.grey[700],
-                        fontSize: 16,
-                      ),
-                    ),
-                    const MyCoin(),
-                  ],
+                const SizedBox(height: 5),
+                Text(
+                  'Welcome back!',
+                  style: TextStyle(
+                    color: Colors.grey[700],
+                    fontSize: 16,
+                  ),
                 ),
                 const SizedBox(height: 25),
                 MyTextField(

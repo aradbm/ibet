@@ -123,7 +123,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const SizedBox(
-                          width: 60,
+                          width: 20,
                         ),
                         Text(
                           'Username: ${snapshot.data.username}',

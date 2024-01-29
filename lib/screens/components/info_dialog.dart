@@ -6,28 +6,65 @@ class InfoWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
+      backgroundColor: Theme.of(context).dialogBackgroundColor,
       title: const Text('Info'),
-      content: const Column(
+      content: Column(
         children: [
-          Text(
-            'Here you can see all the bets you created and joined. You can also create new bets here.\n',
-          ),
-          Text(
+          const Text(
             'To create a new bet, click the + button in the bottom right corner.\n',
           ),
-          Text(
-            'To join a bet, click on the bet you want to join and click the Join button.\n',
+          const Text(
+            'To join a bet, search by bet ID, click on the bet, and join with your points.\n',
           ),
-          Text(
-            'To see the details of a bet, click on the bet you want to see.\n',
+          const Text('When bet is finished:\n'),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Container(
+                width: 20,
+                height: 20,
+                decoration: BoxDecoration(
+                  color: Colors.green[400],
+                  shape: BoxShape.circle,
+                ),
+              ),
+              const Text('You won'),
+              Container(
+                width: 20,
+                height: 20,
+                decoration: BoxDecoration(
+                  color: Colors.red[400],
+                  shape: BoxShape.circle,
+                ),
+              ),
+              const Text('You lost'),
+            ],
           ),
-          // here show each color and what it means
-          SizedBox(height: 10),
-          Text('Colors:'),
-          Text('Yellow: Bet is still open and you created.',style: TextStyle(color: Colors.yellow),          ),   
-          Text('Grey: Bet is still open and you joined.', style: TextStyle(color: Colors.grey)),
-          Text('Green: Bet is over and you won.', style: TextStyle(color: Colors.green)),
-          Text('Red: Bet is over and you lost.', style: TextStyle(color: Colors.red)),
+          const SizedBox(height: 30),
+          const Text('When bet is not finished:\n'),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Container(
+                width: 20,
+                height: 20,
+                decoration: BoxDecoration(
+                  color: Colors.orange[400],
+                  shape: BoxShape.circle,
+                ),
+              ),
+              const Text('Winner not picked'),
+              Container(
+                width: 20,
+                height: 20,
+                decoration: BoxDecoration(
+                  color: Colors.yellow[400],
+                  shape: BoxShape.circle,
+                ),
+              ),
+              const Text('Bet open'),
+            ],
+          ),
         ],
       ),
       actions: [
