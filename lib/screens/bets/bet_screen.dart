@@ -459,7 +459,6 @@ class _BetScreenState extends State<BetScreen> {
                         tileColor: returnTileColor(
                             int.parse(bet.userpicks.values.elementAt(index))),
                         // show the username as title, using firestoreservice to get the username
-                        // funcition looks like:   Future<String?> getUserName(String uid) async {
                         title: FutureBuilder(
                           future: FireStoreService()
                               .getUserName(bet.userpicks.keys.elementAt(index)),
