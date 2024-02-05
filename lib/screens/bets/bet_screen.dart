@@ -61,7 +61,7 @@ class _BetScreenState extends State<BetScreen> {
         title: isCreator
             ? const Text('Update Bet Screen')
             : const Text('Bet Info'),
-        backgroundColor: Colors.blue,
+        backgroundColor: Theme.of(context).primaryColor,
         actions: [
           if (isCreator && !isDone)
             IconButton(
@@ -166,6 +166,7 @@ class _BetScreenState extends State<BetScreen> {
               Text("Bet Name: ${bet.name}",
                   style: const TextStyle(fontSize: 20)),
               Text("Bet Description: ${bet.description}"),
+              Text("Bet ID: ${bet.betid}"),
               Text("Bet entry point: ${bet.entrypoints}"),
               Text(
                   "Total Points in Bet: ${bet.entrypoints * bet.userpicks.length}"),
