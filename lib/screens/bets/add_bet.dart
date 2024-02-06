@@ -26,7 +26,15 @@ class _AddBetScreenState extends State<AddBetScreen> {
     final formKey = GlobalKey<FormState>();
     // here we create the form for a new bet
     return Scaffold(
-      appBar: AppBar(title: const Text('Add Bet')),
+      appBar: AppBar(
+        title: const Text('Add Bet'),
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: const Icon(Icons.arrow_back, color: Colors.white, size: 24.0),
+        ),
+      ),
       body: SingleChildScrollView(
           child: Form(
         key: formKey,

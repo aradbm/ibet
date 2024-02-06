@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:ibet/firebase_options.dart';
 import 'package:ibet/screens/auth_screen/log_in.dart';
 import 'package:ibet/screens/tabs_screen.dart';
+import 'package:ibet/services/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,11 +19,7 @@ class App extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'ibet',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color.fromARGB(255, 68, 149, 255)),
-        useMaterial3: true,
-      ),
+      theme: AppTheme.lightTheme,
       home: StreamBuilder(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
