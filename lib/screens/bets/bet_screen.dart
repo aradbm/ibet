@@ -58,10 +58,16 @@ class _BetScreenState extends State<BetScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        title: isCreator
-            ? const Text('Update Bet Screen')
-            : const Text('Bet Info'),
+        title: Text(isCreator ? 'Update Bet Screen' : 'Bet Info',
+            style: const TextStyle(fontSize: 20)),
         backgroundColor: Theme.of(context).primaryColor,
+        elevation: 0,
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: const Icon(Icons.arrow_back, color: Colors.white, size: 24.0),
+        ),
         actions: [
           if (isCreator && !isDone)
             IconButton(
@@ -144,33 +150,39 @@ class _BetScreenState extends State<BetScreen> {
                 ),
               ),
               // if bet is done write in big
-              Row(
-                children: [
-                  const Text("Bet Creator: ", style: TextStyle(fontSize: 20)),
-                  FutureBuilder(
-                    future: FireStoreService().getUserName(bet.betopener),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        //check if null
-                        if (snapshot.data == null) {
-                          return const Text("Loading...");
-                        }
-                        return Text(snapshot.data.toString());
-                      }
-                      return const Text("Loading...");
-                    },
-                  ),
-                ],
+              Card(
+                elevation: 5,
+                margin: const EdgeInsets.all(10),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text("Bet Creator: "),
+                        FutureBuilder(
+                          future: FireStoreService().getUserName(bet.betopener),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              //check if null
+                              if (snapshot.data == null) {
+                                return const Text("Loading...");
+                              }
+                              return Text(snapshot.data.toString());
+                            }
+                            return const Text("Loading...");
+                          },
+                        ),
+                      ],
+                    ),
+                    Text("Bet Name: ${bet.name}"),
+                    Text("Bet Description: ${bet.description}"),
+                    Text("Bet ID: ${bet.betid}"),
+                    Text("Bet entry point: ${bet.entrypoints}"),
+                    Text(
+                        "Total Points in Bet: ${bet.entrypoints * bet.userpicks.length}"),
+                  ],
+                ),
               ),
-              const SizedBox(height: 20),
-              Text("Bet Name: ${bet.name}",
-                  style: const TextStyle(fontSize: 20)),
-              Text("Bet Description: ${bet.description}"),
-              Text("Bet ID: ${bet.betid}"),
-              Text("Bet entry point: ${bet.entrypoints}"),
-              Text(
-                  "Total Points in Bet: ${bet.entrypoints * bet.userpicks.length}"),
-              const SizedBox(height: 20),
               Row(
                 children: [
                   const Text("Bet Options:", style: TextStyle(fontSize: 20)),
