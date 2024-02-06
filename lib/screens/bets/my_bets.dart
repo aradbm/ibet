@@ -7,6 +7,8 @@ import 'package:ibet/screens/bets/bet_screen.dart';
 import 'package:ibet/screens/components/my_coin.dart';
 import 'package:ibet/services/firestore.dart';
 
+import '../components/gradient_space.dart';
+
 class MyBetsScreen extends StatefulWidget {
   const MyBetsScreen({super.key});
 
@@ -72,9 +74,8 @@ class _MyBetsScreenState extends State<MyBetsScreen> {
             color: Theme.of(context).colorScheme.onPrimary,
           )),
       appBar: AppBar(
-        title: Text(('My Created Bets'),
-            style: TextStyle(color: Theme.of(context).colorScheme.onSecondary)),
-        backgroundColor: Theme.of(context).primaryColor,
+        flexibleSpace: const GradientSpace(),
+        title: const Text(('My Created Bets')),
       ),
       body: StreamBuilder(
         stream: FireStoreService()
@@ -82,9 +83,7 @@ class _MyBetsScreenState extends State<MyBetsScreen> {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             List bets = snapshot.data!.docs;
-            // Sort the bets by:
-            // First, if the bet has a winning option
-            // Second, by the time left
+            // Sort the bets by:bet has a winning option and by the time left
             bets.sort((a, b) {
               Map<String, dynamic> aData = a.data() as Map<String, dynamic>;
               Map<String, dynamic> bData = b.data() as Map<String, dynamic>;
@@ -100,8 +99,10 @@ class _MyBetsScreenState extends State<MyBetsScreen> {
             });
             if (bets.isEmpty) {
               return const Center(
-                child: Text('You have not created any bets yet',
-                    style: TextStyle(fontSize: 20)),
+                child: Text(
+                  'You have not created any bets yet',
+                  style: TextStyle(fontSize: 20),
+                ),
               );
             }
             return ListView.builder(
@@ -112,52 +113,68 @@ class _MyBetsScreenState extends State<MyBetsScreen> {
                     bet.data() as Map<String, dynamic>;
                 return Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: getTileColor(betData, bet.id),
-                      ),
-                      borderRadius: BorderRadius.circular(15.0),
-                    ),
-                    child: ListTile(
-                      leading: const Icon(Icons.bento_outlined),
-                      title: Text(betData['name']),
-                      subtitle: Row(
-                        children: [
-                          Text("${betData['entrypoints']}  "), // Your text
-                          const MyCoin(), // Your icon
-                          const SizedBox(width: 8.0),
-                        ],
-                      ),
-                      // trailing with the time left, counting down
-                      trailing: Text(
-                        // here we show when from now the bet will end
-                        //  if the bet is already over, we show 'Ended'
-                        //  if the bet is still open, we show the time left in days, hours and minutes, use  premade functions to calculate
-                        betData['winningoption'] != -1
-                            ? 'Ended'
-                            : betData['ends'] > now
-                                ? '${((betData['ends'] - now) / 86400000).floor()}d ${(((betData['ends'] - now) % 86400000) / 3600000).floor()}h ${((((betData['ends'] - now) % 86400000) % 3600000) / 60000).floor()}m'
-                                : 'Ended',
-                        style: TextStyle(
-                            color: betData['ends'] > now
-                                ? Colors.green[800]
-                                : Colors.redAccent),
-                      ),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => BetScreen(
-                              bet: Bet.fromJson(betData, bet.id),
-                            ),
+                  child: Stack(children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.3),
+                            blurRadius: 2,
                           ),
-                        );
-                      },
+                        ],
+                        borderRadius: BorderRadius.circular(15.0),
+                      ),
+                      child: ListTile(
+                        leading: const Padding(
+                          padding: EdgeInsets.only(left: 4.0),
+                          child: MyCoin(),
+                        ),
+                        title: Text(
+                          betData['name'],
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        subtitle: Text(
+                            "Entry points: ${betData['entrypoints']}  ",
+                            style: const TextStyle(color: Colors.black)),
+                        trailing: Text(
+                          betData['winningoption'] != -1
+                              ? 'Ended'
+                              : betData['ends'] > now
+                                  ? '${((betData['ends'] - now) / 86400000).floor()}d ${(((betData['ends'] - now) % 86400000) / 3600000).floor()}h ${((((betData['ends'] - now) % 86400000) % 3600000) / 60000).floor()}m'
+                                  : 'Ended',
+                          style: TextStyle(
+                              color: betData['ends'] > now
+                                  ? Colors.green[800]
+                                  : Colors.grey[800]),
+                        ),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => BetScreen(
+                                bet: Bet.fromJson(betData, bet.id),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
                     ),
-                  ),
+                    Positioned(
+                      left: 0,
+                      top: 0,
+                      bottom: 0,
+                      child: Container(
+                        width: 10,
+                        decoration: BoxDecoration(
+                          color: getTileColor(betData, bet.id)[0],
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(15.0),
+                            bottomLeft: Radius.circular(15.0),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ]),
                 );
               },
             );

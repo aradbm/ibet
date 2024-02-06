@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:ibet/models/bet.dart';
 import 'package:ibet/services/firestore.dart';
 
+import '../components/gradient_space.dart';
+
 class BetScreen extends StatefulWidget {
   const BetScreen({super.key, required this.bet});
   final Bet bet;
@@ -33,27 +35,6 @@ class _BetScreenState extends State<BetScreen> {
     bool isDone = bet.winningoption != -1;
     bool isParticipant = bet.userpicks.containsKey(user!.uid);
     bool isTimeUp = bet.ends < DateTime.now().millisecondsSinceEpoch;
-
-    // return tile color function, if the bet is done, show the winning option in green
-    Color returnTileColor(int index) {
-      // if wiining option is -1
-      if (bet.winningoption == -1) {
-        return Colors.white;
-      }
-      if (isDone) {
-        if (bet.winningoption == index) {
-          return Colors.green[100]!;
-        } else {
-          return Colors.white;
-        }
-      } else {
-        if (selectedOption == index) {
-          return Colors.green[100]!;
-        } else {
-          return Colors.white;
-        }
-      }
-    }
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
@@ -86,16 +67,9 @@ class _BetScreenState extends State<BetScreen> {
         ),
       ),
       appBar: AppBar(
+        flexibleSpace: const GradientSpace(),
         title: Text(
           isCreator ? 'Update Bet Screen' : 'Bet Info',
-        ),
-        backgroundColor: Theme.of(context).primaryColor,
-        elevation: 0,
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: const Icon(Icons.arrow_back, color: Colors.white, size: 24.0),
         ),
         actions: [
           if (isCreator && !isDone)
@@ -131,7 +105,7 @@ class _BetScreenState extends State<BetScreen> {
                   },
                 );
               },
-              icon: const Icon(Icons.delete, color: Colors.white),
+              icon: const Icon(Icons.delete),
             ),
         ],
       ),
