@@ -59,6 +59,8 @@ class AppTheme {
           borderSide: const BorderSide(color: secondaryColor),
         ),
       ),
+      // change font family
+      fontFamily: 'Arial',
     );
   }
 }
