@@ -3,6 +3,8 @@ import 'package:ibet/models/bet.dart';
 import 'package:ibet/screens/bets/bet_screen.dart';
 import 'package:ibet/services/firestore.dart';
 
+import '../components/gradient_space.dart';
+
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
 
@@ -70,12 +72,13 @@ class _SearchScreenState extends State<SearchScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        flexibleSpace: const GradientSpace(),
         title: const Text('Search Bet'),
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);
           },
-          icon: const Icon(Icons.arrow_back, color: Colors.white, size: 24.0),
+          icon: const Icon(Icons.arrow_back, size: 24.0),
         ),
       ),
       body: Center(

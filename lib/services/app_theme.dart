@@ -16,11 +16,17 @@ class AppTheme {
         secondary: secondaryColor,
       ),
       appBarTheme: const AppBarTheme(
-        backgroundColor: primaryColor,
+        backgroundColor: Colors.transparent,
         titleTextStyle: TextStyle(
-          color: Colors.white,
+          color: primaryColor,
           fontSize: 20,
           fontWeight: FontWeight.bold,
+        ),
+        iconTheme: IconThemeData(
+          color: primaryColor,
+        ),
+        actionsIconTheme: IconThemeData(
+          color: primaryColor,
         ),
       ),
       textTheme: const TextTheme(
@@ -60,7 +66,7 @@ class AppTheme {
         ),
       ),
       // change font family
-      fontFamily: 'Arial',
+      // make all the app bars have the same styling:
     );
   }
 }
