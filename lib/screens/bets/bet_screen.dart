@@ -114,7 +114,7 @@ class _BetScreenState extends State<BetScreen> {
           padding: const EdgeInsets.all(18),
           // calculate the height of the screen based on the number of options and userpicks
           height: MediaQuery.of(context).size.height *
-              (0.5 + (bet.options.length + bet.userpicks.length) * 0.07),
+              (0.5 + (bet.options.length + bet.userpicks.length) * 0.1),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -136,23 +136,9 @@ class _BetScreenState extends State<BetScreen> {
                         .substring(0, 16),
                     style: const TextStyle(fontSize: 17),
                   ),
-                  // FutureBuilder(
-                  //   future: FireStoreService().getUserName(bet.betopener),
-                  //   builder: (context, snapshot) {
-                  //     if (snapshot.hasData) {
-                  //       //check if null
-                  //       if (snapshot.data == null) {
-                  //         return const Text("Loading...");
-                  //       }
-                  //       return Text(snapshot.data.toString(),
-                  //           style: const TextStyle(fontSize: 18));
-                  //     }
-                  //     return const Text("Loading...");
-                  //   },
-                  // ),
                 ],
               ),
-              const SizedBox(height: 40),
+              const SizedBox(height: 10),
               Row(
                 children: [
                   const Spacer(),
@@ -239,9 +225,12 @@ class _BetScreenState extends State<BetScreen> {
                           );
                         }
                       },
-                      child: const Text('Pick Winner'),
+                      child: Text(
+                        'Pick Winner',
+                        style: TextStyle(color: Colors.grey[900]!),
+                      ),
                     ),
-                  SizedBox(width: MediaQuery.of(context).size.width * 0.05),
+                  const SizedBox(width: 6),
                 ],
               ),
               // show here all the options
@@ -265,20 +254,20 @@ class _BetScreenState extends State<BetScreen> {
                           Container(
                             height: 56,
                             decoration: BoxDecoration(
-                              color: Colors.lightBlue[100],
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(
-                                color: Colors.grey,
-                                width: 1,
+                              // use a light color that will be visible around yellow
+                              gradient: LinearGradient(
+                                colors: [
+                                  Theme.of(context)
+                                      .colorScheme
+                                      .primary
+                                      .withOpacity(0.1),
+                                  Theme.of(context)
+                                      .colorScheme
+                                      .primary
+                                      .withOpacity(0.4),
+                                ],
                               ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.5),
-                                  spreadRadius: 1,
-                                  blurRadius: 2,
-                                  offset: const Offset(0, 3),
-                                ),
-                              ],
+                              borderRadius: BorderRadius.circular(20),
                             ),
                             width: bet.userpicks.values
                                     .where((element) =>
@@ -314,7 +303,7 @@ class _BetScreenState extends State<BetScreen> {
                                         ? const Icon(
                                             Icons.emoji_events,
                                             color:
-                                                Color.fromARGB(255, 0, 114, 27),
+                                                Color.fromARGB(255, 45, 44, 44),
                                             size: 30,
                                           )
                                         : null)
@@ -407,7 +396,10 @@ class _BetScreenState extends State<BetScreen> {
                           );
                         }
                       },
-                      child: const Text('Place Bet'),
+                      child: Text(
+                        'Place Bet',
+                        style: TextStyle(color: Colors.grey[900]!),
+                      ),
                     ),
                     const SizedBox(width: 20),
                     if (isParticipant)
@@ -437,7 +429,12 @@ class _BetScreenState extends State<BetScreen> {
                           );
                           Navigator.pop(context);
                         },
-                        child: const Text('Get out of Bet'),
+                        child: Text(
+                          'Get out of Bet',
+                          style: TextStyle(
+                            color: Colors.grey[900]!,
+                          ),
+                        ),
                       ),
                   ],
                 ),
@@ -517,7 +514,7 @@ class _BetScreenState extends State<BetScreen> {
                                           bet.userpicks.values.elementAt(index))
                                   ? const Icon(
                                       Icons.emoji_events,
-                                      color: Color.fromARGB(255, 0, 114, 27),
+                                      color: Color.fromARGB(255, 45, 44, 44),
                                       size: 30,
                                     )
                                   : null,

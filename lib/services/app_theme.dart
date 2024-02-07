@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 
 class AppTheme {
   static ThemeData get lightTheme {
-    const Color primaryColor = Color.fromARGB(255, 52, 12, 153); // Deep blue
-    const Color secondaryColor = Color(0xFFFFD600); // Gold
+    const Color primaryColor = Color.fromARGB(255, 52, 12, 153);
+    const Color secondaryColor = Color(0xFFFFD600);
 
     return ThemeData(
       useMaterial3: true,
