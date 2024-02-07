@@ -170,7 +170,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             onPressed: () {
                               changeUsername();
                             },
-                            icon: const Icon(Icons.edit, color: Colors.black),
+                            icon: const Icon(Icons.edit,
+                                color: Colors.black, size: 22),
                           ),
                         ],
                       ),

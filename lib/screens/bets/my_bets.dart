@@ -118,7 +118,7 @@ class _MyBetsScreenState extends State<MyBetsScreen> {
                       decoration: BoxDecoration(
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.grey.withOpacity(0.3),
+                            color: Colors.grey.withOpacity(0.15),
                             blurRadius: 2,
                           ),
                         ],

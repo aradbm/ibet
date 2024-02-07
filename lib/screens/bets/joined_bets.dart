@@ -121,7 +121,7 @@ class _JoinedBetsScreenState extends State<JoinedBetsScreen> {
                       decoration: BoxDecoration(
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.grey.withOpacity(0.3),
+                            color: Colors.grey.withOpacity(0.15),
                             blurRadius: 2,
                           ),
                         ],

@@ -29,6 +29,17 @@ class _AddBetScreenState extends State<AddBetScreen> {
     final formKey = GlobalKey<FormState>();
     // here we create the form for a new bet
     return Scaffold(
+      floatingActionButton: CustomSubmitButton(
+        formKey: formKey,
+        isTimePicked: isTimePicked,
+        betOptions: betOptions,
+        user: user,
+        timeController: timeController,
+        betNameController: betNameController,
+        betDescriptionController: betDescriptionController,
+        betAmountController: betAmountController,
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       appBar: AppBar(
         title: const Text('Add Bet'),
         flexibleSpace: const GradientSpace(),
@@ -41,23 +52,43 @@ class _AddBetScreenState extends State<AddBetScreen> {
           child: Column(
             children: [
               TextController(
-                  betNameController: betNameController,
-                  hintText: 'Bet Name',
-                  validatorText: 'Please enter a bet name'),
-              const SizedBox(
-                height: 10,
+                betNameController: betNameController,
+                hintText: 'Bet Name',
+                validatorText: 'Please enter a bet name',
+                prefixIcon: Icon(
+                  Icons.title_rounded,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
               ),
+              const SizedBox(height: 10),
               TextController(
-                  betNameController: betDescriptionController,
-                  hintText: 'Bet Description',
-                  validatorText: 'Please enter a bet description'),
-              const SizedBox(
-                height: 10,
+                betNameController: betDescriptionController,
+                hintText: 'Bet Description',
+                validatorText: 'Please enter a bet description',
+                prefixIcon: Icon(
+                  Icons.description,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
               ),
+              const SizedBox(height: 10),
               TextFormField(
                 controller: betAmountController,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.grey[400]!,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Theme.of(context).colorScheme.secondary,
+                    ),
+                  ),
                   hintText: 'Bet Amount',
+                  prefixIcon: Icon(
+                    Icons.attach_money,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
                 ),
                 validator: (value) {
                   if (value == null ||
@@ -69,21 +100,19 @@ class _AddBetScreenState extends State<AddBetScreen> {
                   return null;
                 },
               ),
-              const SizedBox(
-                height: 10,
-              ),
+              const SizedBox(height: 10),
               InkWell(
                 onTap: () {
                   DatePicker.showDateTimePicker(context,
                       showTitleActions: true,
                       minTime: DateTime.now(),
                       maxTime: DateTime.now().add(const Duration(days: 30)),
-                      onChanged: (date) {}, onConfirm: (date) {
+                      onChanged: (date) {},
+                      onCancel: () {}, onConfirm: (date) {
                     timeController.text =
                         date.millisecondsSinceEpoch.toString();
                     isTimePicked = true;
                     setState(() {
-                      //
                       tempController = TextEditingController(
                           text: date.toString().substring(0, 16));
                     });
@@ -93,18 +122,34 @@ class _AddBetScreenState extends State<AddBetScreen> {
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(5),
                       border: Border.all(
-                        color: Theme.of(context).colorScheme.secondary,
+                        color: Colors.grey[400]!,
                       ),
                     ),
                     width: double.infinity,
-                    height: 65,
-                    child: Text(
-                      timeController.text.isEmpty
-                          ? 'dd-mm-yyyy 00:00'
-                          : tempController.text,
-                      style: const TextStyle(fontSize: 17),
+                    height: 60,
+                    child: Row(
+                      children: [
+                        const SizedBox(width: 4),
+                        const Icon(
+                          Icons.calendar_today,
+                          size: 22,
+                        ),
+                        const SizedBox(width: 10),
+                        Text(
+                          timeController.text.isEmpty
+                              ? 'dd-mm-yyyy 00:00'
+                              : tempController.text,
+                          style: TextStyle(
+                            fontSize: timeController.text.isEmpty ? 16 : 15,
+                            color: timeController.text.isEmpty
+                                ? const Color.fromARGB(255, 80, 79, 79)
+                                : Colors.black,
+                          ),
+                        ),
+                        const Spacer(),
+                      ],
                     )),
               ),
               // List of bet options
@@ -116,8 +161,27 @@ class _AddBetScreenState extends State<AddBetScreen> {
                   Expanded(
                     child: TextFormField(
                       controller: optionController,
-                      decoration: const InputDecoration(
+                      textInputAction: TextInputAction.done,
+                      onFieldSubmitted: (value) {
+                        if (optionController.text.isNotEmpty) {
+                          setState(() {
+                            betOptions.add(optionController.text);
+                            optionController.clear();
+                          });
+                        }
+                      },
+                      decoration: InputDecoration(
                         hintText: 'Add Bet Option',
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.grey[400]!,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.secondary,
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -134,9 +198,13 @@ class _AddBetScreenState extends State<AddBetScreen> {
                   ),
                 ],
               ),
+              const SizedBox(height: 10),
               for (int i = 0; i < betOptions.length; i++)
                 ListTile(
                   title: Text(betOptions[i]),
+                  // tileColor: Colors.grey[200],
+                  // tile margins 0
+                  contentPadding: const EdgeInsets.only(left: 13),
                   trailing: IconButton(
                     icon: const Icon(Icons.delete),
                     onPressed: () {
@@ -152,49 +220,82 @@ class _AddBetScreenState extends State<AddBetScreen> {
               const SizedBox(
                 height: 10,
               ),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(150, 50),
-                  textStyle: const TextStyle(fontSize: 18),
-                ),
-                onPressed: () async {
-                  if (formKey.currentState!.validate() &&
-                      isTimePicked &&
-                      betOptions.length > 1) {
-                    await FireStoreService().createBet(
-                      {
-                        'betopener': user!.uid,
-                        'ends': int.parse(timeController.text),
-                        'name': betNameController.text,
-                        'description': betDescriptionController.text,
-                        'entrypoints': int.parse(betAmountController.text),
-                        'options': betOptions,
-                        'userpicks': {},
-                        'winningoption': -1,
-                      },
-                    );
-                    // ignore: use_build_context_synchronously
-                    Navigator.pop(context);
-                  } else if (!isTimePicked) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Please pick a time'),
-                      ),
-                    );
-                  } else if (betOptions.length <= 1) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Please add at least 2 options'),
-                      ),
-                    );
-                  }
-                },
-                child: const Text('Submit'),
-              ),
             ],
           ),
         ),
       )),
+    );
+  }
+}
+
+class CustomSubmitButton extends StatelessWidget {
+  const CustomSubmitButton({
+    super.key,
+    required this.formKey,
+    required this.isTimePicked,
+    required this.betOptions,
+    required this.user,
+    required this.timeController,
+    required this.betNameController,
+    required this.betDescriptionController,
+    required this.betAmountController,
+  });
+
+  final GlobalKey<FormState> formKey;
+  final bool isTimePicked;
+  final List<String> betOptions;
+  final User? user;
+  final TextEditingController timeController;
+  final TextEditingController betNameController;
+  final TextEditingController betDescriptionController;
+  final TextEditingController betAmountController;
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        minimumSize: const Size(150, 50),
+        textStyle: const TextStyle(fontSize: 18),
+      ),
+      onPressed: () async {
+        if (formKey.currentState!.validate() &&
+            isTimePicked &&
+            betOptions.length > 1) {
+          await FireStoreService().createBet(
+            {
+              'betopener': user!.uid,
+              'ends': int.parse(timeController.text),
+              'name': betNameController.text,
+              'description': betDescriptionController.text,
+              'entrypoints': int.parse(betAmountController.text),
+              'options': betOptions,
+              'userpicks': {},
+              'winningoption': -1,
+            },
+          );
+          // ignore: use_build_context_synchronously
+          Navigator.pop(context);
+        } else if (!isTimePicked) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Please pick a time'),
+            ),
+          );
+        } else if (betOptions.length <= 1) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Please add at least 2 options'),
+            ),
+          );
+        }
+      },
+      child: Text(
+        'Submit',
+        style: TextStyle(
+            color: Theme.of(context).colorScheme.primary,
+            fontSize: 18,
+            fontWeight: FontWeight.w500),
+      ),
     );
   }
 }

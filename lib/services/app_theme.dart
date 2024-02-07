@@ -64,8 +64,6 @@ class AppTheme {
           borderSide: const BorderSide(color: secondaryColor),
         ),
       ),
-      // change font family
-      // make all the app bars have the same styling:
     );
   }
 }
