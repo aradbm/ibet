@@ -16,6 +16,7 @@ class _AddBetScreenState extends State<AddBetScreen> {
   final betDescriptionController = TextEditingController();
   final betAmountController = TextEditingController();
   final timeController = TextEditingController();
+  var tempController = TextEditingController();
   final optionController = TextEditingController();
   bool isTimePicked = false;
   List<String> betOptions = [];
@@ -46,15 +47,20 @@ class _AddBetScreenState extends State<AddBetScreen> {
                   betNameController: betNameController,
                   hintText: 'Bet Name',
                   validatorText: 'Please enter a bet name'),
+              const SizedBox(
+                height: 10,
+              ),
               TextController(
                   betNameController: betDescriptionController,
                   hintText: 'Bet Description',
                   validatorText: 'Please enter a bet description'),
+              const SizedBox(
+                height: 10,
+              ),
               TextFormField(
                 controller: betAmountController,
                 decoration: const InputDecoration(
                   hintText: 'Bet Amount',
-                  icon: Icon(Icons.money),
                 ),
                 validator: (value) {
                   if (value == null ||
@@ -65,6 +71,48 @@ class _AddBetScreenState extends State<AddBetScreen> {
                   }
                   return null;
                 },
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              InkWell(
+                onTap: () {
+                  DatePicker.showDateTimePicker(context,
+                      showTitleActions: true,
+                      minTime: DateTime.now(),
+                      maxTime: DateTime.now().add(const Duration(days: 30)),
+                      onChanged: (date) {}, onConfirm: (date) {
+                    timeController.text =
+                        date.millisecondsSinceEpoch.toString();
+                    isTimePicked = true;
+                    setState(() {
+                      //
+                      tempController = TextEditingController(
+                          text: date.toString().substring(0, 16));
+                    });
+                  }, currentTime: DateTime.now(), locale: LocaleType.en);
+                },
+                child: Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: Theme.of(context).colorScheme.secondary,
+                      ),
+                    ),
+                    width: double.infinity,
+                    height: 65,
+                    child: Text(
+                      timeController.text.isEmpty
+                          ? 'dd-mm-yyyy 00:00'
+                          : tempController.text,
+                      style: const TextStyle(fontSize: 17),
+                    )),
+              ),
+              // List of bet options
+              const SizedBox(
+                height: 10,
               ),
               Row(
                 children: [
@@ -89,7 +137,6 @@ class _AddBetScreenState extends State<AddBetScreen> {
                   ),
                 ],
               ),
-              // List of bet options
               for (int i = 0; i < betOptions.length; i++)
                 ListTile(
                   title: Text(betOptions[i]),
@@ -102,26 +149,17 @@ class _AddBetScreenState extends State<AddBetScreen> {
                     },
                   ),
                 ),
-              TextButton(
-                  style: TextButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(255, 192, 234, 255),
-                  ),
-                  onPressed: () {
-                    DatePicker.showDateTimePicker(context,
-                        showTitleActions: true,
-                        minTime: DateTime.now(),
-                        maxTime: DateTime.now().add(const Duration(days: 30)),
-                        onChanged: (date) {}, onConfirm: (date) {
-                      timeController.text =
-                          date.millisecondsSinceEpoch.toString();
-                      isTimePicked = true;
-                    }, currentTime: DateTime.now(), locale: LocaleType.en);
-                  },
-                  child: const Text(
-                    'Pick a time 🕒',
-                    style: TextStyle(color: Colors.blue),
-                  )),
+              const SizedBox(
+                height: 10,
+              ),
+              const SizedBox(
+                height: 10,
+              ),
               ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size(150, 50),
+                  textStyle: const TextStyle(fontSize: 18),
+                ),
                 onPressed: () async {
                   if (formKey.currentState!.validate() &&
                       isTimePicked &&
