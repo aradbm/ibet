@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:ibet/models/bet.dart';
 import 'package:ibet/services/firestore.dart';
 
+import '../components/gradient_space.dart';
+
 class BetScreen extends StatefulWidget {
   const BetScreen({super.key, required this.bet});
   final Bet bet;
@@ -34,39 +36,40 @@ class _BetScreenState extends State<BetScreen> {
     bool isParticipant = bet.userpicks.containsKey(user!.uid);
     bool isTimeUp = bet.ends < DateTime.now().millisecondsSinceEpoch;
 
-    // return tile color function, if the bet is done, show the winning option in green
-    Color returnTileColor(int index) {
-      // if wiining option is -1
-      if (bet.winningoption == -1) {
-        return Colors.white;
-      }
-      if (isDone) {
-        if (bet.winningoption == index) {
-          return Colors.green[100]!;
-        } else {
-          return Colors.white;
-        }
-      } else {
-        if (selectedOption == index) {
-          return Colors.green[100]!;
-        } else {
-          return Colors.white;
-        }
-      }
-    }
-
     return Scaffold(
       resizeToAvoidBottomInset: true,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: Container(
+        padding: const EdgeInsets.all(8.0),
+        decoration: BoxDecoration(
+          color: Colors.grey.shade100,
+          border: Border.all(
+            color: isTimeUp
+                ? isDone
+                    ? Colors.green
+                    : Colors.orange
+                : isDone
+                    ? Colors.green
+                    : Colors.grey,
+            width: 2,
+          ),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Text(
+          isTimeUp
+              ? isDone
+                  ? "Status: Bet is done, winning option is ${bet.winningoption + 1}"
+                  : "Status: Bet time is done! winner not chosen yet."
+              : isDone
+                  ? "Status: Bet is done, winning option is ${bet.winningoption + 1}"
+                  : "Status: Bet is open, pick your option!",
+          style: const TextStyle(fontSize: 15),
+        ),
+      ),
       appBar: AppBar(
-        title: Text(isCreator ? 'Update Bet Screen' : 'Bet Info',
-            style: const TextStyle(fontSize: 20)),
-        backgroundColor: Theme.of(context).primaryColor,
-        elevation: 0,
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: const Icon(Icons.arrow_back, color: Colors.white, size: 24.0),
+        flexibleSpace: const GradientSpace(),
+        title: Text(
+          isCreator ? 'Update Bet Screen' : 'Bet Info',
         ),
         actions: [
           if (isCreator && !isDone)
@@ -108,86 +111,52 @@ class _BetScreenState extends State<BetScreen> {
       ),
       body: SingleChildScrollView(
         child: Container(
-          padding: const EdgeInsets.all(15),
+          padding: const EdgeInsets.all(18),
           // calculate the height of the screen based on the number of options and userpicks
           height: MediaQuery.of(context).size.height *
               (0.5 + (bet.options.length + bet.userpicks.length) * 0.07),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Center(
-                // here we show the bet status
-                // if the time is up but the winner is not chosen yet, show the following
-                // bet time is done, but winner is not chosen yet
-                // if the time is up and the winner is chosen, show the following
-                // bet time is done and winner is chosen
-                child: Container(
-                  padding: const EdgeInsets.all(8.0),
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade100,
-                    border: Border.all(
-                      color: isTimeUp
-                          ? isDone
-                              ? Colors.green
-                              : Colors.orangeAccent
-                          : isDone
-                              ? Colors.green
-                              : Colors.orangeAccent,
-                      width: 2,
-                    ),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Text(
-                    isTimeUp
-                        ? isDone
-                            ? "Status: Bet is done, winning option is ${bet.winningoption + 1}"
-                            : "Status: Bet time is done, winner not chosen yet!"
-                        : isDone
-                            ? "Status: Bet is done, winning option is ${bet.winningoption + 1}"
-                            : "Status: Bet is open, time is not up yet!",
-                    style: const TextStyle(fontSize: 15),
-                  ),
-                ),
-              ),
               // if bet is done write in big
-              Card(
-                elevation: 5,
-                margin: const EdgeInsets.all(10),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text("Bet Creator: "),
-                        FutureBuilder(
-                          future: FireStoreService().getUserName(bet.betopener),
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData) {
-                              //check if null
-                              if (snapshot.data == null) {
-                                return const Text("Loading...");
-                              }
-                              return Text(snapshot.data.toString());
-                            }
-                            return const Text("Loading...");
-                          },
-                        ),
-                      ],
-                    ),
-                    Text("Bet Name: ${bet.name}"),
-                    Text("Bet Description: ${bet.description}"),
-                    Text("Bet ID: ${bet.betid}"),
-                    Text("Bet entry point: ${bet.entrypoints}"),
-                    Text(
-                        "Total Points in Bet: ${bet.entrypoints * bet.userpicks.length}"),
-                  ],
-                ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(bet.name, style: const TextStyle(fontSize: 30)),
+                  Text(bet.description, style: const TextStyle(fontSize: 17)),
+                  const SizedBox(height: 20),
+                  Text(
+                    "Entry points ${bet.entrypoints}",
+                    style: const TextStyle(fontSize: 17),
+                  ),
+                  Text(
+                    DateTime.fromMillisecondsSinceEpoch(bet.ends)
+                        .toString()
+                        .substring(0, 16),
+                    style: const TextStyle(fontSize: 17),
+                  ),
+                  // FutureBuilder(
+                  //   future: FireStoreService().getUserName(bet.betopener),
+                  //   builder: (context, snapshot) {
+                  //     if (snapshot.hasData) {
+                  //       //check if null
+                  //       if (snapshot.data == null) {
+                  //         return const Text("Loading...");
+                  //       }
+                  //       return Text(snapshot.data.toString(),
+                  //           style: const TextStyle(fontSize: 18));
+                  //     }
+                  //     return const Text("Loading...");
+                  //   },
+                  // ),
+                ],
               ),
+              const SizedBox(height: 40),
               Row(
                 children: [
-                  const Text("Bet Options:", style: TextStyle(fontSize: 20)),
                   const Spacer(),
-                  if (isCreator && !isDone)
+                  if (isCreator && !isDone && !isTimeUp)
                     IconButton(
                       onPressed: () {
                         // add option
@@ -281,37 +250,94 @@ class _BetScreenState extends State<BetScreen> {
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 itemBuilder: (context, index) {
-                  return ListTile(
-                    tileColor: bet.winningoption == index
-                        ? Colors.green[100]
-                        : Colors.white,
-                    title: Text(bet.options[index]),
-                    // only for creator, show the radio button to choose the winner
-                    trailing: isCreator && !isDone
-                        ? Radio<int>(
-                            value: index,
-                            groupValue: winningoption,
-                            onChanged: (int? value) {
-                              setState(() {
-                                winningoption = value!;
-                              });
-                            },
-                          )
-                        : null,
-                    leading: Radio<int>(
-                      value: index,
-                      groupValue: selectedOption,
-                      onChanged: (int? value) {
-                        // if the bet is done, don't allow the user to change his pick
-                        if (!isDone && !isTimeUp) {
-                          setState(() => selectedOption = value!);
-                        }
-                      },
+                  return Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: Colors.grey,
+                          width: 1,
+                        ),
+                      ),
+                      child: Stack(
+                        children: [
+                          Container(
+                            height: 56,
+                            decoration: BoxDecoration(
+                              color: Colors.lightBlue[100],
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: Colors.grey,
+                                width: 1,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.5),
+                                  spreadRadius: 1,
+                                  blurRadius: 2,
+                                  offset: const Offset(0, 3),
+                                ),
+                              ],
+                            ),
+                            width: bet.userpicks.values
+                                    .where((element) =>
+                                        int.parse(element) == index)
+                                    .isEmpty
+                                ? 0
+                                : (bet.userpicks.values
+                                            .where((element) =>
+                                                int.parse(element) == index)
+                                            .length /
+                                        bet.userpicks.length) *
+                                    MediaQuery.of(context).size.width,
+                          ),
+                          ListTile(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            title: Text(bet.options[index]),
+                            // only for creator, show the radio button to choose the winner
+                            trailing: isCreator && !isDone
+                                ? Radio<int>(
+                                    value: index,
+                                    groupValue: winningoption,
+                                    onChanged: (int? value) {
+                                      setState(() {
+                                        winningoption = value!;
+                                      });
+                                    },
+                                  )
+                                // we want to show a crown icon if the bet is done and the option is the winning option
+                                : isDone
+                                    ? (bet.winningoption == index
+                                        ? const Icon(
+                                            Icons.emoji_events,
+                                            color:
+                                                Color.fromARGB(255, 0, 114, 27),
+                                            size: 30,
+                                          )
+                                        : null)
+                                    : null,
+                            leading: !isDone
+                                ? Radio<int>(
+                                    value: index,
+                                    groupValue: selectedOption,
+                                    onChanged: (int? value) {
+                                      // if the bet is done, don't allow the user to change his pick
+                                      if (!isDone && !isTimeUp) {
+                                        setState(() => selectedOption = value!);
+                                      }
+                                    },
+                                  )
+                                : null,
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 },
               ),
-              // show the following row if the winner is not chosen , and the time is not up
               if (!isDone && !isTimeUp)
                 Row(
                   children: [
@@ -416,19 +442,28 @@ class _BetScreenState extends State<BetScreen> {
                   ],
                 ),
               // show all participants usernames
-              const SizedBox(height: 20),
+              // lets add a divider
+              const SizedBox(height: 10),
+              const Divider(
+                color: Colors.grey,
+                thickness: 2,
+              ),
               const Text("Current Participants:",
                   style: TextStyle(fontSize: 20)),
+              const SizedBox(height: 10),
               Expanded(
                 child: ListView.builder(
                   itemCount: bet.userpicks.length,
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   itemBuilder: (context, index) {
-                    if (isCreator) {
+                    if (isCreator && !isDone) {
                       return ListTile(
-                        tileColor: returnTileColor(
-                            int.parse(bet.userpicks.values.elementAt(index))),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        // use getTileColor function to return the color of the tile
+                        tileColor: Colors.grey[300],
                         title: FutureBuilder(
                           future: FireStoreService()
                               .getUserName(bet.userpicks.keys.elementAt(index)),
@@ -443,7 +478,7 @@ class _BetScreenState extends State<BetScreen> {
                             return const Text("Loading...");
                           },
                         ),
-                        trailing: !isDone
+                        trailing: !isDone && !isTimeUp
                             ? IconButton(
                                 onPressed: () {
                                   setState(() {
@@ -466,24 +501,49 @@ class _BetScreenState extends State<BetScreen> {
                     } else {
                       // show only the username of the participant in each tile
                       // for each tile, if it's the creator show in orange, if won show in green
-                      return ListTile(
-                        // use getTileColor function to return the color of the tile
-                        tileColor: returnTileColor(
-                            int.parse(bet.userpicks.values.elementAt(index))),
-                        // show the username as title, using firestoreservice to get the username
-                        title: FutureBuilder(
-                          future: FireStoreService()
-                              .getUserName(bet.userpicks.keys.elementAt(index)),
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData) {
-                              //check if null
-                              if (snapshot.data == null) {
-                                return const Text("Loading...");
-                              }
-                              return Text(snapshot.data.toString());
-                            }
-                            return const Text("Loading...");
-                          },
+                      return Padding(
+                        padding: const EdgeInsets.all(2.0),
+                        child: ListTile(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          // use getTileColor function to return the color of the tile
+                          tileColor: Colors.grey[300],
+                          // show the username as title, using firestoreservice to get the username
+                          trailing: bet.winningoption == -1
+                              ? null
+                              : bet.winningoption ==
+                                      int.parse(
+                                          bet.userpicks.values.elementAt(index))
+                                  ? const Icon(
+                                      Icons.emoji_events,
+                                      color: Color.fromARGB(255, 0, 114, 27),
+                                      size: 30,
+                                    )
+                                  : null,
+                          title: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              FutureBuilder(
+                                future: FireStoreService().getUserName(
+                                    bet.userpicks.keys.elementAt(index)),
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasData) {
+                                    //check if null
+                                    if (snapshot.data == null) {
+                                      return const Text("Loading...");
+                                    }
+                                    return Text(snapshot.data.toString());
+                                  }
+                                  return const Text("Loading...");
+                                },
+                              ),
+                              Text(
+                                "Chose option: ${int.parse(bet.userpicks.values.elementAt(index)) + 1}",
+                                style: const TextStyle(fontSize: 12),
+                              ),
+                            ],
+                          ),
                         ),
                       );
                     }

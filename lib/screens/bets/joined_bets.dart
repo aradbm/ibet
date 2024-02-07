@@ -7,6 +7,8 @@ import 'package:ibet/screens/bets/search_bet.dart';
 import 'package:ibet/screens/components/my_coin.dart';
 import 'package:ibet/services/firestore.dart';
 
+import '../components/gradient_space.dart';
+
 class JoinedBetsScreen extends StatefulWidget {
   const JoinedBetsScreen({super.key});
 
@@ -60,12 +62,14 @@ class _JoinedBetsScreenState extends State<JoinedBetsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(('My Joined Bets'),
-            style: TextStyle(color: Theme.of(context).colorScheme.onSecondary)),
-        backgroundColor: Theme.of(context).primaryColor,
+            style: TextStyle(color: Theme.of(context).colorScheme.primary)),
+        flexibleSpace: const GradientSpace(),
         actions: [
           IconButton(
-            icon: Icon(Icons.search,
-                color: Theme.of(context).colorScheme.onSecondary),
+            icon: Icon(
+              Icons.search,
+              color: Theme.of(context).colorScheme.primary,
+            ),
             onPressed: () {
               Navigator.push(
                 context,
@@ -75,72 +79,67 @@ class _JoinedBetsScreenState extends State<JoinedBetsScreen> {
           ),
         ],
       ),
-      body: SafeArea(
-        child: StreamBuilder(
-          stream: FireStoreService()
-              .getJoinedBets(FirebaseAuth.instance.currentUser!.uid),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              List bets = snapshot.data!.docs;
-              // Sort the bets by:
-              // First, if the bet has a winning option
-              // Second, by the time left
-              bets.sort((a, b) {
-                Map<String, dynamic> aData = a.data() as Map<String, dynamic>;
-                Map<String, dynamic> bData = b.data() as Map<String, dynamic>;
-                if (aData['winningoption'] != -1 &&
-                    bData['winningoption'] == -1) {
-                  return 1;
-                } else if (aData['winningoption'] == -1 &&
-                    bData['winningoption'] != -1) {
-                  return -1;
-                } else {
-                  return aData['ends'] - bData['ends'];
-                }
-              });
-
-              if (bets.isEmpty) {
-                return const Center(
-                  child: Text('You have not joined any bets yet'),
-                );
+      body: StreamBuilder(
+        stream: FireStoreService()
+            .getJoinedBets(FirebaseAuth.instance.currentUser!.uid),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            List bets = snapshot.data!.docs;
+            // Sort the bets by:bet has a winning option and by the time left
+            bets.sort((a, b) {
+              Map<String, dynamic> aData = a.data() as Map<String, dynamic>;
+              Map<String, dynamic> bData = b.data() as Map<String, dynamic>;
+              if (aData['winningoption'] != -1 &&
+                  bData['winningoption'] == -1) {
+                return 1;
+              } else if (aData['winningoption'] == -1 &&
+                  bData['winningoption'] != -1) {
+                return -1;
+              } else {
+                return aData['ends'] - bData['ends'];
               }
-              return ListView.builder(
-                itemCount: bets.length,
-                itemBuilder: (context, index) {
-                  DocumentSnapshot bet = bets[index];
-                  Map<String, dynamic> betData =
-                      bet.data() as Map<String, dynamic>;
-                  // here we show each bet that the user has joined
-                  // we retrurn a container with the bet name, the entry points and the time left
+            });
 
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(
+            if (bets.isEmpty) {
+              return const Center(
+                child: Text(
+                  'You have not joined any bets yet',
+                  style: TextStyle(fontSize: 20),
+                ),
+              );
+            }
+            return ListView.builder(
+              itemCount: bets.length,
+              itemBuilder: (context, index) {
+                DocumentSnapshot bet = bets[index];
+                Map<String, dynamic> betData =
+                    bet.data() as Map<String, dynamic>;
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Stack(children: [
+                    Container(
                       decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: getTileColor(betData, bet.id),
-                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.3),
+                            blurRadius: 2,
+                          ),
+                        ],
                         borderRadius: BorderRadius.circular(15.0),
                       ),
                       child: ListTile(
-                        // i send the winnign option, the end time to the getTileColor function
-                        // and the option I chose
-                        leading: const Icon(Icons.bento_outlined),
-                        title: Text(betData['name']),
-                        subtitle: Row(
-                          children: [
-                            // Add some horizontal spacing
-                            Text("${betData['entrypoints']}  "), // Your text
-                            const MyCoin(), // Your icon
-                            const SizedBox(width: 8.0),
-                          ],
+                        leading: const Padding(
+                          padding: EdgeInsets.only(left: 4.0),
+                          child: MyCoin(),
                         ),
-                        // trailing with the time left, counting down
+                        title: Text(
+                          betData['name'],
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        subtitle: Text(
+                            "Entry points: ${betData['entrypoints']}  ",
+                            style: const TextStyle(color: Colors.black)),
                         trailing: Text(
-                          // if the bet is closed, we show 'Ended'
-
                           betData['winningoption'] != -1
                               ? 'Ended'
                               : betData['ends'] > now
@@ -149,7 +148,7 @@ class _JoinedBetsScreenState extends State<JoinedBetsScreen> {
                           style: TextStyle(
                               color: betData['ends'] > now
                                   ? Colors.green[800]
-                                  : Colors.redAccent),
+                                  : Colors.grey[800]),
                         ),
                         onTap: () {
                           Navigator.push(
@@ -163,16 +162,31 @@ class _JoinedBetsScreenState extends State<JoinedBetsScreen> {
                         },
                       ),
                     ),
-                  );
-                },
-              );
-            } else {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-          },
-        ),
+                    Positioned(
+                      left: 0,
+                      top: 0,
+                      bottom: 0,
+                      child: Container(
+                        width: 10,
+                        decoration: BoxDecoration(
+                          color: getTileColor(betData, bet.id)[0],
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(15.0),
+                            bottomLeft: Radius.circular(15.0),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ]),
+                );
+              },
+            );
+          } else {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        },
       ),
     );
   }

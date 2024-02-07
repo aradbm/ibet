@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:ibet/screens/bets/joined_bets.dart';
 import 'package:ibet/screens/bets/my_bets.dart';
 import 'package:ibet/screens/profile.dart';
@@ -27,29 +28,81 @@ class _TabsNavState extends State<TabsNav> {
     };
 
     return Scaffold(
-      body: activePage,
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Theme.of(context).primaryColor,
-        onTap: _selectPage,
-        currentIndex: _selectedPageIndex,
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: Theme.of(context).colorScheme.onPrimary,
-        unselectedItemColor: Theme.of(context).colorScheme.onPrimaryContainer,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.list),
-            label: 'Created Bets',
+        body: activePage,
+        // bottomNavigationBar: BottomNavigationBar(
+        //   backgroundColor: Colors.red,
+        //   onTap: _selectPage,
+        //   currentIndex: _selectedPageIndex,
+        //   type: BottomNavigationBarType.shifting,
+        //   showUnselectedLabels: true,
+        //   selectedItemColor: Theme.of(context).colorScheme.primary,
+        //   unselectedItemColor: Theme.of(context).colorScheme.secondary,
+        //   items: const [
+        //     BottomNavigationBarItem(
+        //       icon: Icon(Icons.list),
+        //       label: 'Created Bets',
+        //     ),
+        //     BottomNavigationBarItem(
+        //       icon: Icon(Icons.money),
+        //       label: 'Joined Bets',
+        //     ),
+        //     BottomNavigationBarItem(
+        //       icon: Icon(Icons.person),
+        //       label: 'Profile',
+        //     ),
+        //   ],
+        // ),
+        bottomNavigationBar: Container(
+          // I want to have a little shadow to the bottom nav bar
+          decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.4),
+                spreadRadius: 5,
+                blurRadius: 7,
+                offset: const Offset(0, -1),
+              ),
+            ],
+            color: Theme.of(context).colorScheme.primary.withOpacity(0.97),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.money),
-            label: 'Joined Bets',
+          height: 95,
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          child: GNav(
+            // colors:
+            color: Colors.grey[500],
+            // use lighter version of the primary
+            activeColor: Theme.of(context).colorScheme.primary,
+            tabBackgroundColor: Theme.of(context).colorScheme.surface,
+            textStyle: TextStyle(
+              color: Theme.of(context).colorScheme.primary,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+            // settings:
+            curve: Curves.fastOutSlowIn,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            gap: 10,
+            // iconSize: 30,
+            tabBorderRadius: 25,
+            duration: const Duration(milliseconds: 200),
+            padding: const EdgeInsets.all(16),
+            tabs: const [
+              GButton(
+                icon: Icons.list,
+                text: 'Created Bets',
+              ),
+              GButton(
+                icon: Icons.money,
+                text: 'Joined Bets',
+              ),
+              GButton(
+                icon: Icons.person,
+                text: 'Profile',
+              ),
+            ],
+            selectedIndex: _selectedPageIndex,
+            onTabChange: _selectPage,
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
-      ),
-    );
+        ));
   }
 }

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 
 class AppTheme {
   static ThemeData get lightTheme {
-    // Primary color for your app
     const Color primaryColor = Color.fromARGB(255, 52, 12, 153); // Deep blue
     const Color secondaryColor = Color(0xFFFFD600); // Gold
 
@@ -16,11 +15,17 @@ class AppTheme {
         secondary: secondaryColor,
       ),
       appBarTheme: const AppBarTheme(
-        backgroundColor: primaryColor,
+        backgroundColor: Colors.transparent,
         titleTextStyle: TextStyle(
-          color: Colors.white,
+          color: primaryColor,
           fontSize: 20,
           fontWeight: FontWeight.bold,
+        ),
+        iconTheme: IconThemeData(
+          color: primaryColor,
+        ),
+        actionsIconTheme: IconThemeData(
+          color: primaryColor,
         ),
       ),
       textTheme: const TextTheme(
@@ -59,6 +64,8 @@ class AppTheme {
           borderSide: const BorderSide(color: secondaryColor),
         ),
       ),
+      // change font family
+      // make all the app bars have the same styling:
     );
   }
 }

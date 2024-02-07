@@ -1,7 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ibet/models/bet.dart';
 import 'package:ibet/screens/bets/bet_screen.dart';
 import 'package:ibet/services/firestore.dart';
+import '../components/gradient_space.dart';
+import '../components/my_coin.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -14,52 +17,152 @@ class _SearchScreenState extends State<SearchScreen> {
   final betidController = TextEditingController();
   Bet? bet;
   Widget betWidget = const Text('');
+  final now = DateTime.now().millisecondsSinceEpoch;
 
-  // init state
   @override
   void initState() {
     super.initState();
-    betidController.text = '3UHUsRAQmdT2OLXVx2gg';
+    betidController.text = 'Best bet in the world';
+  }
+
+  // function to get tile color
+  List<Color> getTileColor(Map<String, dynamic> betData, String betID) {
+    Bet bet = Bet.fromJson(betData, betID);
+
+    String myID = FirebaseAuth.instance.currentUser!.uid;
+    Map<String, dynamic> userpicks = bet.userpicks as Map<String, dynamic>;
+    int myOption = -1;
+    if (userpicks[myID] != null) {
+      myOption = int.parse(userpicks[myID]);
+    }
+    int winningOption = bet.winningoption;
+    bool isTimeEnded = bet.ends < now;
+    bool isWinnerPicked = winningOption != -1;
+    // if bet is closed and I won - green
+    // if bet is closed and I lost - red
+    // if bet is open - yellow
+    // if bet ended but the winner is not yet decided - orange
+    const Color baseColor = Color.fromARGB(255, 237, 239, 240);
+    final Color winColor = Colors.green[400]!;
+    final Color loseColor = Colors.red[400]!;
+    final Color undecidedColor = Colors.orange[400]!;
+    final Color openBetColor = Colors.yellow[400]!;
+    final Color defaultColor = Colors.grey[400]!;
+
+    // Conditional logic to determine color
+    if (isWinnerPicked && myOption == winningOption) {
+      return [winColor, baseColor];
+    } else if (isWinnerPicked && myOption != winningOption) {
+      return [loseColor, baseColor];
+    } else if (isTimeEnded && !isWinnerPicked) {
+      return [undecidedColor, baseColor];
+    } else if (!isTimeEnded) {
+      return [openBetColor, baseColor];
+    } else {
+      return [defaultColor, baseColor];
+    }
   }
 
   void searchBet() async {
-    // Get bet from firestore using the bet id or name
-    Bet? bet =
-        await FireStoreService().getBetByID(betidController.text.toString());
-    bet ??=
-        await FireStoreService().getBetByName(betidController.text.toString());
-    setState(() {
-      // Check if bet is null
+    Bet? bet = await FireStoreService().getBetByID(betidController.text);
+    bet ??= await FireStoreService().getBetByName(betidController.text);
 
+    setState(() {
       if (bet == null) {
-        betWidget = const Text('Bet not found',
-            style: TextStyle(color: Colors.red, fontSize: 20));
+        betWidget = Text(
+          'Bet not found',
+          style: TextStyle(
+            // use matt red
+            color: Colors.red[400],
+            fontSize: 34,
+            fontWeight: FontWeight.bold,
+          ),
+        );
       } else {
-        // Bet is found, update the widget
         betWidget = InkWell(
           onTap: () {
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => BetScreen(bet: bet!)));
           },
-          child: Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.pink.shade300),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Bet found!',
-                  style: TextStyle(color: Colors.green, fontSize: 20),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Stack(children: [
+              Container(
+                decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.3),
+                      blurRadius: 2,
+                    ),
+                  ],
+                  borderRadius: BorderRadius.circular(15.0),
                 ),
-                Text('Bet name: ${bet.name}'),
-                Text('Bet description: ${bet.description}'),
-                Text('Bet ends: ${bet.ends}'),
-                Text('Bet entry points: ${bet.entrypoints}'),
-              ],
-            ),
+                child: ListTile(
+                  leading: const Padding(
+                    padding: EdgeInsets.only(left: 4.0),
+                    child: MyCoin(),
+                  ),
+                  title: Text(
+                    bet.name,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        bet.description,
+                        style: const TextStyle(color: Colors.black),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 2,
+                      ),
+                      // show description
+                      Text("Entry points: ${bet.entrypoints}  ",
+                          style: const TextStyle(color: Colors.black)),
+                      // show the creator
+                      FutureBuilder(
+                        future: FireStoreService().getUserName(bet.betopener),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Text('Loading...');
+                          }
+                          return Text(
+                            'Created by: ${snapshot.data}',
+                            style: const TextStyle(color: Colors.black),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                  trailing: Text(
+                    bet.winningoption != -1
+                        ? 'Ended'
+                        : bet.ends > now
+                            ? '${((bet.ends - now) / 86400000).floor()}d ${(((bet.ends - now) % 86400000) / 3600000).floor()}h ${((((bet.ends - now) % 86400000) % 3600000) / 60000).floor()}m'
+                            : 'Ended',
+                    style: TextStyle(
+                        color: bet.ends > now
+                            ? Colors.green[800]
+                            : Colors.grey[800]),
+                  ),
+                ),
+              ),
+              Positioned(
+                left: 0,
+                top: 0,
+                bottom: 0,
+                child: Container(
+                  width: 10,
+                  decoration: BoxDecoration(
+                    color: getTileColor(bet.toJson(), bet.betid)[0],
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(15.0),
+                      bottomLeft: Radius.circular(15.0),
+                    ),
+                  ),
+                ),
+              ),
+            ]),
           ),
         );
       }
@@ -70,39 +173,55 @@ class _SearchScreenState extends State<SearchScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        flexibleSpace: const GradientSpace(),
         title: const Text('Search Bet'),
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: const Icon(Icons.arrow_back, color: Colors.white, size: 24.0),
-        ),
       ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              const Text('Find bets by bet ID or name:',
-                  style: TextStyle(fontSize: 20)),
-              SizedBox(
-                width: 300,
-                child: TextField(
-                  controller: betidController,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: 'Enter bet id or bet name',
-                  ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            const SizedBox(height: 10),
+            TextField(
+              controller: betidController,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(25.0),
+                    borderSide: BorderSide.none),
+                filled: true,
+                fillColor: Colors.grey[200],
+                hintText: 'Enter bet id or bet name',
+                suffixIcon: IconButton(
+                  icon: const Icon(Icons.clear),
+                  onPressed: () => betidController.clear(),
                 ),
               ),
-              ElevatedButton(
-                onPressed: searchBet,
-                child: const Text('Search'),
+              onSubmitted: (String value) {
+                searchBet();
+              },
+              textInputAction: TextInputAction.done,
+            ),
+            const SizedBox(height: 20),
+            betWidget,
+            const Spacer(),
+            ElevatedButton.icon(
+              onPressed: searchBet,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.secondary,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18.0)),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 35, vertical: 13),
               ),
-              const SizedBox(height: 20),
-              betWidget,
-            ],
-          ),
+              icon: Icon(Icons.search,
+                  size: 25, color: Theme.of(context).colorScheme.primary),
+              label: Text(
+                'Search',
+                style: TextStyle(
+                    fontSize: 20, color: Theme.of(context).colorScheme.primary),
+              ),
+            ),
+            const SizedBox(height: 20),
+          ],
         ),
       ),
     );

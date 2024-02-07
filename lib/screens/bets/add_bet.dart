@@ -4,6 +4,8 @@ import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart';
 import 'package:ibet/screens/components/text_controller.dart';
 import 'package:ibet/services/firestore.dart';
 
+import '../components/gradient_space.dart';
+
 class AddBetScreen extends StatefulWidget {
   const AddBetScreen({super.key});
 
@@ -29,12 +31,7 @@ class _AddBetScreenState extends State<AddBetScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Add Bet'),
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: const Icon(Icons.arrow_back, color: Colors.white, size: 24.0),
-        ),
+        flexibleSpace: const GradientSpace(),
       ),
       body: SingleChildScrollView(
           child: Form(

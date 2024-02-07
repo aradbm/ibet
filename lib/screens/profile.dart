@@ -4,6 +4,8 @@ import 'package:ibet/screens/components/info_dialog.dart';
 import 'package:ibet/services/auth_service.dart';
 import 'package:ibet/services/firestore.dart';
 
+import 'components/gradient_space.dart';
+
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
@@ -77,24 +79,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Profile',
-          style: TextStyle(color: Theme.of(context).colorScheme.onSecondary),
-        ),
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        title: const Text('Profile'),
+        flexibleSpace: const GradientSpace(),
         actions: [
           IconButton(
             onPressed: () {
               final auth = AuthService();
               auth.signOut();
             },
-            icon: Icon(Icons.logout,
-                color: Theme.of(context).colorScheme.onPrimary),
+            icon: const Icon(Icons.logout),
           ),
         ],
         leading: IconButton(
-          icon:
-              Icon(Icons.info, color: Theme.of(context).colorScheme.onPrimary),
+          icon: const Icon(Icons.info),
           onPressed: () {
             showDialog(
               context: context,
