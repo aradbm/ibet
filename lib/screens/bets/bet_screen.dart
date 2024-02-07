@@ -59,10 +59,10 @@ class _BetScreenState extends State<BetScreen> {
           isTimeUp
               ? isDone
                   ? "Status: Bet is done, winning option is ${bet.winningoption + 1}"
-                  : "Status: Bet time is done, winner not chosen yet!"
+                  : "Status: Bet time is done! winner not chosen yet."
               : isDone
                   ? "Status: Bet is done, winning option is ${bet.winningoption + 1}"
-                  : "Status: Bet is open, time is not up yet!",
+                  : "Status: Bet is open, pick your option!",
           style: const TextStyle(fontSize: 15),
         ),
       ),
