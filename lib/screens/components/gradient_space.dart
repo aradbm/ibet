@@ -17,7 +17,16 @@ class GradientSpace extends StatelessWidget {
             Theme.of(context).colorScheme.primary,
             Colors.transparent,
           ],
+          // I want the lower part of the gradient to be more visible
+          stops: const [0.10, 1],
         ),
+        // I want the border to be a little blured on the botton
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.white,
+            blurRadius: 5,
+          ),
+        ],
       ),
     );
   }
