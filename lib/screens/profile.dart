@@ -32,7 +32,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: const Text('Change Username'),
+            title: const Text(
+              'Change Username',
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 18,
+              ),
+            ),
             content: Form(
               key: formKey,
               child: TextFormField(
@@ -40,6 +46,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 controller: usernameController,
                 decoration: const InputDecoration(
                   hintText: 'New Username',
+                  hintStyle: TextStyle(fontSize: 15),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -54,22 +61,34 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: const Text('Cancel'),
+                child: Text(
+                  'Cancel',
+                  style: TextStyle(
+                    color: Theme.of(context).primaryColor,
+                    fontSize: 12,
+                  ),
+                ),
               ),
-              TextButton(
+              ElevatedButton(
                 onPressed: () {
                   if (formKey.currentState!.validate()) {
                     // update username in firestore
-                    FireStoreService().updateUsername(
-                      user.uid,
-                      usernameController.text,
-                    );
-                    setState(() {});
-
+                    setState(() {
+                      FireStoreService().updateUsername(
+                        user.uid,
+                        usernameController.text,
+                      );
+                    });
                     Navigator.pop(context);
                   }
                 },
-                child: const Text('Change'),
+                child: Text(
+                  'Change',
+                  style: TextStyle(
+                    color: Theme.of(context).primaryColor,
+                    fontSize: 12,
+                  ),
+                ),
               ),
             ],
           );
@@ -113,37 +132,73 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   children: [
                     Image.asset(
                       'assets/icon/icon.png',
-                      height: 150,
+                      height: 170,
+                      // make round corners
+                      color: Theme.of(context)
+                          .colorScheme
+                          .primary
+                          .withOpacity(0.45),
+                      colorBlendMode: BlendMode.color,
                     ),
                     const SizedBox(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const SizedBox(
-                          width: 20,
-                        ),
-                        Text(
-                          'Username: ${snapshot.data.username}',
-                          style: const TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
+                    const Text(
+                      'Username:',
+                      style: TextStyle(
+                        fontSize: 19,
+                        color: Colors.black,
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    Container(
+                      width: 300,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                        borderRadius: BorderRadius.circular(15.0),
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            '${snapshot.data.username}',
+                            style: const TextStyle(
+                              fontSize: 15,
+                              color: Colors.black,
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 10),
-                        IconButton(
-                          onPressed: () {
-                            changeUsername();
-                          },
-                          icon: const Icon(Icons.edit),
-                        ),
-                      ],
+                          IconButton(
+                            onPressed: () {
+                              changeUsername();
+                            },
+                            icon: const Icon(Icons.edit, color: Colors.black),
+                          ),
+                        ],
+                      ),
                     ),
                     const SizedBox(height: 20),
-                    Text(
-                      'Points: ${snapshot.data.points}',
-                      style: const TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
+                    const Text(
+                      'Points:',
+                      style: TextStyle(
+                        fontSize: 19,
+                        color: Colors.black,
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    Container(
+                      width: 300,
+                      height: 45,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                        borderRadius: BorderRadius.circular(15.0),
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Row(
+                        children: [
+                          Text(
+                            '${snapshot.data.points}',
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                        ],
                       ),
                     ),
                   ],

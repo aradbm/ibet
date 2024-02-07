@@ -77,109 +77,118 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[350],
-      body: Center(
-        child: SingleChildScrollView(
-          child: SizedBox(
-            height: MediaQuery.of(context).size.height * 0.8,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // use assets/icon.png
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(100),
-                    color: Colors.white,
+      backgroundColor: Colors.transparent,
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            stops: [0.4, 1],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Colors.white,
+              Color.fromARGB(255, 56, 17, 171),
+              // Colors.transparent,
+            ],
+          ),
+        ),
+        child: Center(
+          child: SingleChildScrollView(
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height * 0.8,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // use assets/icon.png
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(100),
+                      color: Colors.white,
+                    ),
+                    clipBehavior: Clip.hardEdge,
+                    child: Image.asset(
+                      'assets/icon/icon.png',
+                      height: 170,
+                      // make round corners
+                      color: Theme.of(context)
+                          .colorScheme
+                          .primary
+                          .withOpacity(0.6),
+                      colorBlendMode: BlendMode.color,
+                    ),
                   ),
-                  clipBehavior: Clip.hardEdge,
-                  child: Image.asset(
-                    'assets/icon/icon.png',
-                    height: 120,
-                    // make round corners
-                    color: Colors.white,
-                    colorBlendMode: BlendMode.color,
+                  const SizedBox(height: 5),
+                  const Text(
+                    'Welcome back!',
+                    style: TextStyle(
+                      color: Color.fromARGB(255, 27, 26, 26),
+                      fontSize: 16,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  'Welcome back!',
-                  style: TextStyle(
-                    color: Colors.grey[700],
-                    fontSize: 16,
-                  ),
-                ),
-                const SizedBox(height: 25),
-                MyTextField(
-                  controller: emailController,
-                  hintText: 'Email',
-                  obscureText: false,
-                ),
-                const SizedBox(height: 10),
-                MyTextField(
-                  controller: passwordController,
-                  hintText: 'Password',
-                  obscureText: true,
-                ),
-                if (!_isLogin) ...[
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 25),
                   MyTextField(
-                    controller: usernameController,
-                    hintText: 'Username',
+                    controller: emailController,
+                    hintText: 'Email',
                     obscureText: false,
                   ),
-                ],
-                const SizedBox(height: 35),
-                MyButton(
-                  onTap: _submit,
-                  text: _isLogin ? 'Login' : 'Register',
-                ),
-                const SizedBox(height: 50),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                  child: Row(
+                  const SizedBox(height: 10),
+                  MyTextField(
+                    controller: passwordController,
+                    hintText: 'Password',
+                    obscureText: true,
+                  ),
+                  if (!_isLogin) ...[
+                    const SizedBox(height: 10),
+                    MyTextField(
+                      controller: usernameController,
+                      hintText: 'Username',
+                      obscureText: false,
+                    ),
+                  ],
+                  const SizedBox(height: 35),
+                  MyButton(
+                    onTap: _submit,
+                    text: _isLogin ? 'Login' : 'Register',
+                  ),
+                  const SizedBox(height: 50),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                    child: Expanded(
+                      child: Divider(
+                        thickness: 0.5,
+                        color: Colors.grey.shade50,
+                      ),
+                    ),
+                  ),
+                  const Spacer(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Expanded(
-                        child: Divider(
-                          thickness: 0.5,
-                          color: Colors.grey[400],
+                      const Text(
+                        'Not a member?',
+                        style: TextStyle(
+                          color: Color.fromARGB(255, 8, 7, 7),
                         ),
                       ),
-                      Expanded(
-                        child: Divider(
-                          thickness: 0.5,
-                          color: Colors.grey[400],
+                      const SizedBox(width: 4),
+                      TextButton(
+                        onPressed: () {
+                          setState(() {
+                            _isLogin = !_isLogin;
+                          });
+                        },
+                        child: Text(
+                          _isLogin ? 'Register now' : 'Login now',
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onPrimary,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ],
                   ),
-                ),
-                const Spacer(),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Not a member?',
-                      style: TextStyle(color: Colors.grey[700]),
-                    ),
-                    const SizedBox(width: 4),
-                    TextButton(
-                      onPressed: () {
-                        setState(() {
-                          _isLogin = !_isLogin;
-                        });
-                      },
-                      child: Text(
-                        _isLogin ? 'Register now' : 'Login now',
-                        style: const TextStyle(
-                          color: Colors.blue,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-              ],
+                  const SizedBox(height: 10),
+                ],
+              ),
             ),
           ),
         ),
