@@ -1,34 +1,34 @@
-# ibet
+# ibet: Fun & Friendly Way to Bet with Friends!
 
-An app for creating bets with friends!
+## Screenshots
 
+![App Samples](ScreenShots/app_samples.png)
 
+## System Architecture and Diagrams
 
-![alt text](ScreenShots/app.png)
+Below you'll find links to documents and diagrams that outline the system architecture, design considerations, and various components of the "ibet" app. These resources are essential for understanding the application's functionality and structure.
 
-# Diagrams & System architecture
-link to initiation document :
-[Link Text](docs/initiationDocument.pdf)
+#### Documentation
 
-    link to document of requirements: 
-[Link Text](docs/Document_ofRequirements.pdf)
+- **Initiation Document:** [View Document](docs/initiationDocument.pdf)
+- **Requirements Document:** [View Document](docs/Document_ofRequirements.pdf)
 
-Use Case diagram:
-[Link Text](docs/UseCaes.png)  
-Class diagram:
-[Link Text](docs/ClassDiagram.png)  
-Object diagram:
-[Link Text](docs/ObjectDiagram.png)  
-Activity diagram:
-[Link Text](docs/Activity.png)  
-Sequence diagram:
-[Link Text](docs/Sequence1.png) , [Link Text](docs/Sequence2.png)  
+#### UML and Process Flow Diagrams
 
-StateMachine diagram:
-[Link Text](docs/StateMachine.png) 
+Explore the structure and flow of the application with our comprehensive UML and process diagrams.
 
-ERD diagram:
-[Link Text](docs/ERD.png) 
+- **Use Case Diagram:** [View Diagram](docs/UseCaes.png)
+- **Class Diagram:** [View Diagram](docs/ClassDiagram.png)
+- **Object Diagram:** [View Diagram](docs/ObjectDiagram.png)
+- **Activity Diagram:** [View Diagram](docs/Activity.png)
+- **Sequence Diagrams:** [First Diagram](docs/Sequence1.png) | [Second Diagram](docs/Sequence2.png)
+- **State Machine Diagram:** [View Diagram](docs/StateMachine.png)
+
+#### Data Modeling
+
+Gain insights into the data structure and relationships within the system.
+
+- **ERD Diagram:** [View Diagram](docs/ERD.png)
 
 ## Features
 
@@ -57,5 +57,3 @@ git clone https://github.com/aradbm/ibet.git
 flutter pub get
 flutter run
 ```
-
-
