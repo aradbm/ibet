@@ -6,6 +6,29 @@ An app for creating bets with friends!
 
 ![alt text](ScreenShots/app.png)
 
+# Diagrams & System architecture
+link to initiation document :
+[Link Text](docs/initiationDocument.pdf)
+
+    link to document of requirements: 
+[Link Text](docs/Document_ofRequirements.pdf)
+
+Use Case diagram:
+[Link Text](docs/UseCaes.png)  
+Class diagram:
+[Link Text](docs/ClassDiagram.png)  
+Object diagram:
+[Link Text](docs/ObjectDiagram.png)  
+Activity diagram:
+[Link Text](docs/Activity.png)  
+Sequence diagram:
+[Link Text](docs/Sequence1.png) , [Link Text](docs/Sequence2.png)  
+
+StateMachine diagram:
+[Link Text](docs/StateMachine.png) 
+
+ERD diagram:
+[Link Text](docs/ERD.png) 
 
 ## Features
 
@@ -34,26 +57,5 @@ git clone https://github.com/aradbm/ibet.git
 flutter pub get
 flutter run
 ```
-4. link to initiation document :
-[Link Text](docs/initiationDocument.pdf)
 
-    link to document of requirements: 
-[Link Text](docs/Document_ofRequirements.pdf)
-
-Use Case diagram:
-[Link Text](docs/UseCaes.png)  
-Class diagram:
-[Link Text](docs/ClassDiagram.png)  
-Object diagram:
-[Link Text](docs/ObjectDiagram.png)  
-Activity diagram:
-[Link Text](docs/Activity.png)  
-Sequence diagram:
-[Link Text](docs/Sequence1.png) , [Link Text](docs/Sequence2.png)  
-
-StateMachine diagram:
-[Link Text](docs/StateMachine.png) 
-
-ERD diagram:
-[Link Text](docs/ERD.png) 
 
