@@ -152,11 +152,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 50),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                    child: Expanded(
-                      child: Divider(
-                        thickness: 0.5,
-                        color: Colors.grey.shade50,
-                      ),
+                    child: Divider(
+                      thickness: 0.5,
+                      color: Colors.grey.shade50,
                     ),
                   ),
                   const Spacer(),

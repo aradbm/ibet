@@ -153,9 +153,8 @@ class _SearchScreenState extends State<SearchScreen> {
                 bottom: 0,
                 child: Container(
                   width: 10,
-                  decoration: BoxDecoration(
-                    color: getTileColor(bet.toJson(), bet.betid)[0],
-                    borderRadius: const BorderRadius.only(
+                  decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(15.0),
                       bottomLeft: Radius.circular(15.0),
                     ),

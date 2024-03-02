@@ -448,104 +448,102 @@ class _BetScreenState extends State<BetScreen> {
               const Text("Current Participants:",
                   style: TextStyle(fontSize: 20)),
               const SizedBox(height: 10),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: bet.userpicks.length,
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemBuilder: (context, index) {
-                    if (isCreator && !isDone) {
-                      return ListTile(
+              ListView.builder(
+                itemCount: bet.userpicks.length,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemBuilder: (context, index) {
+                  if (isCreator && !isDone) {
+                    return ListTile(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      // use getTileColor function to return the color of the tile
+                      tileColor: Colors.grey[300],
+                      title: FutureBuilder(
+                        future: FireStoreService()
+                            .getUserName(bet.userpicks.keys.elementAt(index)),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            //check if null
+                            if (snapshot.data == null) {
+                              return const Text("Loading...");
+                            }
+                            return Text(snapshot.data.toString());
+                          }
+                          return const Text("Loading...");
+                        },
+                      ),
+                      trailing: !isDone && !isTimeUp
+                          ? IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  FireStoreService().removeUserFromBet(
+                                      bet.betid,
+                                      bet.userpicks.keys.elementAt(index),
+                                      bet.entrypoints);
+                                  bet.userpicks.remove(
+                                      bet.userpicks.keys.elementAt(index));
+                                  FireStoreService().updateBet(bet);
+                                });
+                              },
+                              icon: const Icon(Icons.delete),
+                            )
+                          : null,
+                      subtitle: Text(
+                          // show the index + 1
+                          "Chose option: ${int.parse(bet.userpicks.values.elementAt(index)) + 1}"),
+                    );
+                  } else {
+                    // show only the username of the participant in each tile
+                    // for each tile, if it's the creator show in orange, if won show in green
+                    return Padding(
+                      padding: const EdgeInsets.all(2.0),
+                      child: ListTile(
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
                         ),
                         // use getTileColor function to return the color of the tile
                         tileColor: Colors.grey[300],
-                        title: FutureBuilder(
-                          future: FireStoreService()
-                              .getUserName(bet.userpicks.keys.elementAt(index)),
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData) {
-                              //check if null
-                              if (snapshot.data == null) {
-                                return const Text("Loading...");
-                              }
-                              return Text(snapshot.data.toString());
-                            }
-                            return const Text("Loading...");
-                          },
-                        ),
-                        trailing: !isDone && !isTimeUp
-                            ? IconButton(
-                                onPressed: () {
-                                  setState(() {
-                                    FireStoreService().removeUserFromBet(
-                                        bet.betid,
-                                        bet.userpicks.keys.elementAt(index),
-                                        bet.entrypoints);
-                                    bet.userpicks.remove(
-                                        bet.userpicks.keys.elementAt(index));
-                                    FireStoreService().updateBet(bet);
-                                  });
-                                },
-                                icon: const Icon(Icons.delete),
-                              )
-                            : null,
-                        subtitle: Text(
-                            // show the index + 1
-                            "Chose option: ${int.parse(bet.userpicks.values.elementAt(index)) + 1}"),
-                      );
-                    } else {
-                      // show only the username of the participant in each tile
-                      // for each tile, if it's the creator show in orange, if won show in green
-                      return Padding(
-                        padding: const EdgeInsets.all(2.0),
-                        child: ListTile(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          // use getTileColor function to return the color of the tile
-                          tileColor: Colors.grey[300],
-                          // show the username as title, using firestoreservice to get the username
-                          trailing: bet.winningoption == -1
-                              ? null
-                              : bet.winningoption ==
-                                      int.parse(
-                                          bet.userpicks.values.elementAt(index))
-                                  ? const Icon(
-                                      Icons.emoji_events,
-                                      color: Color.fromARGB(255, 45, 44, 44),
-                                      size: 30,
-                                    )
-                                  : null,
-                          title: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              FutureBuilder(
-                                future: FireStoreService().getUserName(
-                                    bet.userpicks.keys.elementAt(index)),
-                                builder: (context, snapshot) {
-                                  if (snapshot.hasData) {
-                                    //check if null
-                                    if (snapshot.data == null) {
-                                      return const Text("Loading...");
-                                    }
-                                    return Text(snapshot.data.toString());
+                        // show the username as title, using firestoreservice to get the username
+                        trailing: bet.winningoption == -1
+                            ? null
+                            : bet.winningoption ==
+                                    int.parse(
+                                        bet.userpicks.values.elementAt(index))
+                                ? const Icon(
+                                    Icons.emoji_events,
+                                    color: Color.fromARGB(255, 45, 44, 44),
+                                    size: 30,
+                                  )
+                                : null,
+                        title: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            FutureBuilder(
+                              future: FireStoreService().getUserName(
+                                  bet.userpicks.keys.elementAt(index)),
+                              builder: (context, snapshot) {
+                                if (snapshot.hasData) {
+                                  //check if null
+                                  if (snapshot.data == null) {
+                                    return const Text("Loading...");
                                   }
-                                  return const Text("Loading...");
-                                },
-                              ),
-                              Text(
-                                "Chose option: ${int.parse(bet.userpicks.values.elementAt(index)) + 1}",
-                                style: const TextStyle(fontSize: 12),
-                              ),
-                            ],
-                          ),
+                                  return Text(snapshot.data.toString());
+                                }
+                                return const Text("Loading...");
+                              },
+                            ),
+                            Text(
+                              "Chose option: ${int.parse(bet.userpicks.values.elementAt(index)) + 1}",
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                          ],
                         ),
-                      );
-                    }
-                  },
-                ),
+                      ),
+                    );
+                  }
+                },
               ),
             ],
           ),
