@@ -9,7 +9,7 @@
 Below you'll find links to documents and diagrams that outline the system architecture, design considerations, and various components of the "ibet" app. These resources are essential for understanding the application's functionality and structure.
 
 #### Documentation
-
+- **Presentation:** [View Document](Copy-of-ibet-Deck.pdf)
 - **Initiation Document:** [View Document](docs/initiationDocument.pdf)
 - **Requirements Document:** [View Document](docs/Document_ofRequirements.pdf)
 
